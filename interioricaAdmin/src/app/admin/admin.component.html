@@ -1,0 +1,44 @@
+<div>
+    <!-- admin.component.html -->
+    <h1 class="mt-3">Welcome Admin</h1>
+    <div class="options mt-3">
+      <button class="btn btn-primary mr-2" (click)="showForm('intro')">Intro</button>
+      <button class="btn btn-primary mr-2" (click)="showForm('aboutUs')">About Us</button>
+      <button class="btn btn-primary" (click)="showForm('projects')">Projects</button>
+      
+    </div>
+    <div class="form-container mt-3">
+      <hr>
+      <div class="parent" style="max-width: 500px;;margin: 0 auto;">
+      <ng-container *ngIf="selectedOption === 'intro'">
+        <form [formGroup]="introForm">
+          <div class="form-group row">
+            <label for="title" style="margin-right: 125px;">Title </label>
+            <input class="form-control" type="text" name="title" formControlName="introTitle" name="title">
+          </div>
+          <div class="form-group row">
+            <label for="subtitle" style="margin-right: 100px;">Subtitle </label>
+            <input class="form-control"  type="text" formControlName="introSubtitle" name="introSubtitle">
+          </div>
+          <div class="form-group row">
+            <label for="introDescription" style="margin-right: 100px;">Description </label>
+            <textarea class="form-control" class="form-control" formControlName ="introDescription" aria-label="With textarea" style="height: 150px;"></textarea>
+          </div> 
+          <div class="form-group row" style="cursor:pointer;">
+            <label for="image">Image</label>
+            <img class="preview-image" [src]="introImage ? introImage : defaultImage" (click)="selectFileInput.click()">
+            <input #selectFileInput type="file" (change)="imagesPreview($event)" id="file-input" name="file-input" style="display: none;">
+          </div>
+        </form>
+        <button type="submit" class="btn btn-primary" (click)="updateIntro()" >Update Intro</button>
+      </ng-container>
+      <ng-container *ngIf="selectedOption === 'aboutUs'">
+        <p>About US</p>
+      </ng-container>
+      <ng-container *ngIf="selectedOption === 'projects'">
+        <p>Projects</p>
+      </ng-container>
+      </div>
+    </div>
+  </div>
+  
