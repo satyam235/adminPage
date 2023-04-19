@@ -26,14 +26,33 @@
           </div> 
           <div class="form-group row" style="cursor:pointer;">
             <label for="image">Image</label>
-            <img class="preview-image" [src]="introImage ? introImage : defaultImage" (click)="selectFileInput.click()">
-            <input #selectFileInput type="file" (change)="imagesPreview($event)" id="file-input" name="file-input" style="display: none;">
+            <img class="preview-image" [src]="introImage ? introImage : currnetIntroImage" (click)="selectFileInput.click()">
+            <input #selectFileInput type="file" (change)="imagesPreview($event,'intro')" id="file-input" name="file-input" style="display: none;">
           </div>
         </form>
         <button type="submit" class="btn btn-primary" (click)="updateIntro()" >Update Intro</button>
       </ng-container>
       <ng-container *ngIf="selectedOption === 'aboutUs'">
-        <p>About US</p>
+        <form [formGroup]="aboutUsForm">
+          <div class="form-group row">
+            <label for="aboutUsTitle" style="margin-right: 125px;">Title </label>
+            <input class="form-control" type="text" name="aboutUsTitle" formControlName="aboutUsTitle" >
+          </div>
+          <div class="form-group row">
+            <label for="aboutUsPara1" style="margin-right: 100px;">Para 1 </label>
+            <input class="form-control"  type="text" formControlName="aboutUsPara1" name="aboutUsPara1">
+          </div>
+          <div class="form-group row">
+            <label for="aboutUsPara2" style="margin-right: 100px;">Description </label>
+            <textarea class="form-control" class="form-control" formControlName ="aboutUsPara2" aria-label="With textarea" style="height: 150px;"></textarea>
+          </div> 
+          <div class="form-group row" style="cursor:pointer;">
+            <label for="image">Image</label>
+            <img class="preview-image" [src]="introImage ? introImage : currnetAboutUsImage" (click)="selectFileInput.click()">
+            <input #selectFileInput type="file" (change)="imagesPreview($event,'about_us')" id="file-input" name="file-input" style="display: none;">
+          </div>
+        </form>
+        <button type="submit" class="btn btn-primary" (click)="updateIntro()" >Update Intro</button>
       </ng-container>
       <ng-container *ngIf="selectedOption === 'projects'">
         <p>Projects</p>
