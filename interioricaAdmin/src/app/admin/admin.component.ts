@@ -27,6 +27,8 @@ export class AdminComponent  {
   });
   // ProjectsCarousel
 
+  numberOfTags = 0;
+  numberOfTagsArray = [0];
   projectCarausal1 :any;
   individualProjectImage = {
     main_img:{
@@ -131,7 +133,6 @@ export class AdminComponent  {
     this.setReviewData();
     this.setUpcommingProjectsData();
     this.setContactUsData();
-    this.setprojectCaraouselData();
   }
   
   selectedOption: string = 'intro';
@@ -161,11 +162,69 @@ export class AdminComponent  {
   }
 
   setprojectCaraouselData() {
-    this.individualProjectImage.main_img.image_src = "https://picsum.photos/600/400?random=1"
-    this.tag_frame.tag_name = "Tag Name";
-    this.tag_frame.image_list = ["https://picsum.photos/600/400?random=1","https://picsum.photos/600/400?random=2","https://picsum.photos/600/400?random=3","https://picsum.photos/600/400?random=4"]
-    this.individualProjectImage.main_img.tags = [this.tag_frame];
-    this.projectCarausal1 = [this.individualProjectImage];
+    var data = [
+      {
+        "main_img" : "https://picsum.photos/600/400?random=1",
+        "tags" : [
+          {
+            "tag_name" : "Kitchen",
+            "image_list" : ["https://picsum.photos/600/400?random=1","https://picsum.photos/600/400?random=2"]
+          },
+          {
+            "tag_name" : "Bedroom",
+            "image_list" : ["https://picsum.photos/600/400?random=3","https://picsum.photos/600/400?random=4"]
+          }
+        ]
+      },
+      {
+        "main_img" : "https://picsum.photos/600/400?random=2",
+        "tags" : [
+          {
+            "tag_name" : "Hall",
+            "image_list" : ["https://picsum.photos/600/400?random=1","https://picsum.photos/600/400?random=2"]
+          },{
+            "tag_name" : "Bedroom",
+            "image_list" : ["https://picsum.photos/600/400?random=3","https://picsum.photos/600/400?random=4"]
+          }
+        ]
+      },
+      {
+        "main_img" : "https://picsum.photos/600/400?random=3",
+        "tags" : [
+          {
+            "tag_name" : "Kitchen",
+            "image_list" : ["https://picsum.photos/600/400?random=1","https://picsum.photos/600/400?random=2"]
+          },{
+            "tag_name" : "Hall",
+            "image_list" : ["https://picsum.photos/600/400?random=3","https://picsum.photos/600/400?random=4"]
+          }
+        ]
+      }
+    ]
+    // this.individualProjectImage.main_img.image_src = "https://picsum.photos/600/400?random=1"
+    // this.tag_frame.tag_name = "Tag 1";
+    // this.tag_frame.image_list = ["https://picsum.photos/600/400?random=1","https://picsum.photos/600/400?random=2","https://picsum.photos/600/400?random=3","https://picsum.photos/600/400?random=4"]
+    // this.individualProjectImage.main_img.tags = [this.tag_frame];
+    // this.projectCarausal1 = [this.individualProjectImage];
+    // this.individualProjectImage.main_img.image_src = "https://picsum.photos/600/400?random=1"
+    // this.tag_frame.tag_name = "Tag 2";
+    // this.tag_frame.image_list = ["https://picsum.photos/600/400?random=1","https://picsum.photos/600/400?random=2","https://picsum.photos/600/400?random=3","https://picsum.photos/600/400?random=4"]
+    // this.individualProjectImage.main_img.tags = [this.tag_frame];
+    // this.projectCarausal1.push(this.individualProjectImage);
+    // console.log(this.projectCarausal1);
+    var projects:any  = []
+    for (let index = 0; index < data.length; index++) {
+      var individualProjectImage1 : any ={
+        main_img : {
+          image_src : "",
+          tags : []
+      }
+      }
+      individualProjectImage1.main_img.image_src = data[index].main_img;
+      individualProjectImage1.main_img.tags = data[index].tags;
+      projects.push(individualProjectImage1);
+    }
+    this.projectCarausal1 = projects;
     console.log(this.projectCarausal1);
   }
 
@@ -197,7 +256,7 @@ export class AdminComponent  {
     this.selectedOption = option;
   }
 
-  imagesPreview(event:any,type:string,id=1,subtype='',subtype_2 ='') {
+  imagesPreview(event:any,type:string,id=1,subtype='',subtype_2 ='',id_2=0,id_3=0) {
     console.log(id)
     console.log(subtype)
     console.log(subtype_2)
@@ -205,12 +264,11 @@ export class AdminComponent  {
     const file = event.target.files[0]; 
     const reader = new FileReader();
     reader.onload = (e: any) => {
-      console.log(type)
       if (type == 'intro') this.introImage = e.target.result;
       else if (type == 'about_us') this.aboutUsImage = e.target.result;
       else if (type == 'real_life_reviews') this.updatedReviewBackgroundImage = e.target.result;
       else if  (type == 'reviews'){
-        console.log(id);
+        
         this.reviewList[id].client_image = e.target.result;
       }
       else if (type == 'add_reviews'){
@@ -224,15 +282,19 @@ export class AdminComponent  {
         }
       }
       else if(type == 'project_display'){
-        console.log(id);
         if (subtype == 'main_img' && subtype_2 == 'image_src'){
-          console.log(id);
-          this.projectCarausal1[id].main_img.image_src = e.target.result;
-      }
-     }
+          if (id == 0) this.projectCarausal1.push(this.individualProjectImage);
+              this.projectCarausal1[id].main_img.image_src = e.target.result;
+          }
+        if (subtype == 'tags' && subtype_2 == 'image_list'){
+          this.projectCarausal1[id].main_img.tags[id_2].image_list[id_3] = e.target.result;
+        }
+        console.log(this.projectCarausal1);
+     };
+    }
     reader.readAsDataURL(file);
     this.selectFileInput.nativeElement.value = null; 
-  }
+  
 }
   // Function to update Intro data
   updateIntro() {
@@ -314,7 +376,19 @@ export class AdminComponent  {
   }
 
   switchProjectDisplay(type = 'update'){
+    if(type == 'update'){
+      this.setprojectCaraouselData();
+    }
     this.selectedProjectOption = type;
   }
 
+  deleteProject(index=0){
+    this.projectCarausal1.splice(index,1);
+    this.toastr.success('Projects Display Deleted Successfully');
+  }
+  addTag(){
+    for(let index = 0; index < this.numberOfTags; index++){
+      if (index !=0) this.individualProjectImage.main_img.tags.push(index);
+    }
+  }
 }

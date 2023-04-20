@@ -189,11 +189,37 @@
                 <input #selectFileInput type="file" (change)="imagesPreview($event,'project_display',i,'main_img','image_src')" id="file-input" name="file-input" style="display: none;">
                 <br>
               </div>
+              <div *ngFor="let tag of project.main_img.tags; let tag_index = index ">
+                <p>TAG Name</p>
+                <input type="text" class="form-control" [(ngModel)]="tag.tag_name">
+                <div *ngFor="let image_item of tag.image_list;let image_index = index">
+                  <div class="col-md-4">
+                    <img style="margin-bottom: 20px;cursor: pointer;" class="preview-image" [src]="image_item ? image_item : null" (click)="selectFileInput.click()">
+                    <input #selectFileInput type="file" (change)="imagesPreview($event,'project_display',i,'tags','image_list',tag_index,image_index)" id="file-input" name="file-input" style="display: none;">
+                    <br>
+                  </div>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary mr-2" (click)="updateProjectsDisplay()">Update Projects Display</button>
+              <button type="submit" class="btn  btn-danger" (click)="deleteProject(i)">Delete Project</button>
             </div>
-            <button type="submit" class="btn btn-primary" (click)="updateProjectsDisplay()">Update Projects Display</button>
         </div>
         <div *ngIf="selectedProjectOption == 'add'">
-          <p>add</p>
+          <p> Add a New Project</p>
+          <p>Add Main Image :</p>
+          <div class="col-md-4">
+            <img style="margin-bottom: 20px;cursor: pointer;" class="preview-image" [src]="individualProjectImage.main_img.image_src ? individualProjectImage.main_img.image_src : 'https://picsum.photos/600/400?random=1'" (click)="selectFileInput.click()">
+            <input #selectFileInput type="file" (change)="imagesPreview($event,'project_display',0,'main_img','image_src')" id="file-input" name="file-input" style="display: none;">
+            <br>
+          </div>
+          <p>Add Tags</p>
+          <div>
+            <label>Number of Taga to add</label>
+            <input type="number" class="form-control" [(ngModel)]="numberOfTags" (change)="addTag()">
+            <div *ngFor="let tag of numberOfTagsArray"></div>
+            <!-- <input type="text" class="form-control" [(ngModel)]="individualProjectImage.main_img.tags[0].tag_name">
+             -->
+          </div>
         </div>
       </ng-container>
       </div>
