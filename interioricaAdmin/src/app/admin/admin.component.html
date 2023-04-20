@@ -1,7 +1,7 @@
 <div>
     <!-- admin.component.html -->
-    <h1 class="mt-3">Welcome Admin</h1>
-    <div class="options mt-3">
+    <h1 class="mt-3 ml-2">Welcome Admin</h1>
+    <div class="options mt-3 ml-2">
       <button class="btn btn-primary mr-2" (click)="showForm('intro')">Intro</button>
       <button class="btn btn-primary mr-2" (click)="showForm('aboutUs')">About Us</button>
       <button class="btn btn-primary mr-2" (click)="showForm('projects_display')">Projects Display</button>
@@ -178,7 +178,7 @@
           <button type="submit" class="btn btn-primary" (click)="updateContactUs()">Update Contact Info</button>
         </form>
       </ng-container>
-      <ng-container *ngIf="selectedOption =='projects_display'">
+      <!-- <ng-container *ngIf="selectedOption =='projects_display'">
         <button type="submit" class="btn btn-primary mr-2" (click)="switchProjectDisplay('update')">Update Projects Display</button>
         <butttton type="submit" class="btn btn-primary m3-3" (click)="switchProjectDisplay('add')">Add Project</butttton>
         <div *ngIf="selectedProjectOption == 'update'">
@@ -217,9 +217,38 @@
             <label>Number of Taga to add</label>
             <input type="number" class="form-control" [(ngModel)]="numberOfTags" (change)="addTag()">
             <div *ngFor="let tag of numberOfTagsArray"></div>
-            <!-- <input type="text" class="form-control" [(ngModel)]="individualProjectImage.main_img.tags[0].tag_name">
-             -->
+            //<input type="text" class="form-control" [(ngModel)]="individualProjectImage.main_img.tags[0].tag_name">
+             //
           </div>
+        </div>
+      </ng-container> -->
+
+      <ng-container *ngIf="selectedOption =='projects_display'">
+        <div *ngFor="let project of projectCarausal1; let i = index">
+            <button type="button" class="btn btn-link" (click)="project.expanded = !project.expanded">
+                {{ project.expanded ? 'Collapse' : 'Expand' }} Project {{i}}
+            </button>
+            <div *ngIf="project.expanded">
+                <p>Main Project Image</p>
+                <div class="col-md-4">
+                    <img style="margin-bottom: 20px;cursor: pointer;" class="preview-image" [src]="project.main_img.image_src ? project.main_img.image_src : null" (click)="selectFileInput.click()">
+                    <input #selectFileInput type="file" (change)="imagesPreview($event,'project_display',i,'main_img','image_src')" id="file-input" name="file-input" style="display: none;">
+                    <br>
+                </div>
+                <div *ngFor="let tag of project.main_img.tags; let tag_index = index">
+                    <p>TAG Name</p>
+                    <input type="text" class="form-control" [(ngModel)]="tag.tag_name">
+                    <div *ngFor="let image_item of tag.image_list;let image_index = index">
+                        <div class="col-md-4">
+                            <img style="margin-bottom: 20px;cursor: pointer;" class="preview-image" [src]="image_item ? image_item : null" (click)="selectFileInput.click()">
+                            <input #selectFileInput type="file" (change)="imagesPreview($event,'project_display',i,'tags','image_list',tag_index,image_index)" id="file-input" name="file-input" style="display: none;">
+                            <br>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary mr-2" (click)="updateProjectsDisplay()">Update Projects Display</button>
+                <button type="submit" class="btn  btn-danger" (click)="deleteProject(i)">Delete Project</button>
+            </div>
         </div>
       </ng-container>
       </div>

@@ -133,6 +133,7 @@ export class AdminComponent  {
     this.setReviewData();
     this.setUpcommingProjectsData();
     this.setContactUsData();
+    this.setprojectCaraouselData();
   }
   
   selectedOption: string = 'intro';
@@ -375,12 +376,6 @@ export class AdminComponent  {
     this.toastr.success('Projects Display Added Successfully');
   }
 
-  switchProjectDisplay(type = 'update'){
-    if(type == 'update'){
-      this.setprojectCaraouselData();
-    }
-    this.selectedProjectOption = type;
-  }
 
   deleteProject(index=0){
     this.projectCarausal1.splice(index,1);
