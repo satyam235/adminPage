@@ -5,17 +5,17 @@ import {
   Validators,
   FormControl
 } from '@angular/forms';
-
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css']
 })
-export class AdminComponent {
+export class AdminComponent  {
   @ViewChild('selectFileInput') selectFileInput!: ElementRef;
 
   // Introduction
-  currnetIntroImage = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR11dbvjijhPrRPlnz-gmIREmQi67ShE2lD7_KcjB-IrQ&s';
+  currentIntroImage = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR11dbvjijhPrRPlnz-gmIREmQi67ShE2lD7_KcjB-IrQ&s';
   introTitle = new FormControl('',[]);
   introSubtitle = new FormControl('',[]);
   introDescription = new FormControl('',[]);
@@ -25,6 +25,20 @@ export class AdminComponent {
     introSubtitle: this.introSubtitle,
     introDescription: this.introDescription
   });
+  // ProjectsCarousel
+
+  projectCarausal1 :any;
+  individualProjectImage = {
+    main_img:{
+      image_src:"",
+      tags : [{}]
+    }
+  }
+  tag_frame = {
+    tag_name : "tag1",
+    image_list : [""]
+  }
+  selectedProjectOption = "update"
 
   // About Us
   aboutUsTitle = new FormControl('',[]);
@@ -38,9 +52,86 @@ export class AdminComponent {
   currnetAboutUsImage = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR11dbvjijhPrRPlnz-gmIREmQi67ShE2lD7_KcjB-IrQ&s';
   aboutUsImage :any;
 
-  constructor(private _formBuilder: FormBuilder,) {
+  // Projects
+  projectTitle = new FormControl('',[]);
+  projectSubtitle = new FormControl('',[]);
+  projectDescription = new FormControl('',[]);
+  updatedProjectUrlList = [] ;
+  projectForm = new FormGroup({
+    projectTitle: this.projectTitle,
+    projectSubtitle: this.projectSubtitle,
+    projectDescription: this.projectDescription
+  });
+  projectUrlList = [
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR11dbvjijhPrRPlnz-gmIREmQi67ShE2lD7_KcjB-IrQ&s',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR11dbvjijhPrRPlnz-gmIREmQi67ShE2lD7_KcjB-IrQ&s',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR11dbvjijhPrRPlnz-gmIREmQi67ShE2lD7_KcjB-IrQ&s',
+  ];
+  selectedReviewOption = "";
+  // Real Life Reviews
+  reviewTitle = new FormControl('',[]);
+  reviewSubtitle = new FormControl('',[]);
+  reviewDescription = new FormControl('',[]);
+  reviewForm = new FormGroup({
+    reviewTitle: this.reviewTitle,
+    reviewSubtitle: this.reviewSubtitle,
+    reviewDescription: this.reviewDescription
+  });
+  reviewBackgroundImage = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR11dbvjijhPrRPlnz-gmIREmQi67ShE2lD7_KcjB-IrQ&s';
+  updatedReviewBackgroundImage :any;
+
+  // Reviews
+  reviewList = [
+    {
+      "id":0,
+      "client_name" : "John Doe",
+      "review" : "Hey there, I am using this template right now to build my website. I must say the customer support is excellent. Keep up the good work guys!",
+      "client_image" : "https://picsum.photos/600/400?random=1"
+    },
+    {
+      "id":1,
+      "client_name" : "John Doe",
+      "review" : "Hey there, I must say the customer support is excellent. Keep up the good work guys!",
+      "client_image" : "https://picsum.photos/600/400?random=2"
+    },
+    {
+      "id":2,
+      "client_name" : "John Doe",
+      "review" : "Hey there, I am using this template right now to build my website !!",
+      "client_image" : "https://picsum.photos/600/400?random=3"
+    }
+  ]
+  newReview = {
+    "id":0,
+    "client_name" : "",
+    "review" : "",
+    "client_image" : ""
+  }
+
+  // Upcomming Projects
+  upcommingProjectList = {
+    "minor_projects" : [""],
+    "major_projects" : ""
+  }
+
+  //Contact Us
+  contactUsEmail = new FormControl('',[]);
+  contactUsPhone = new FormControl('',[]);
+  contactUsAddress = new FormControl('',[]);
+  contactUsForm = new FormGroup({
+    contactUsEmail: this.contactUsEmail,
+    contactUsPhone: this.contactUsPhone,
+    contactUsAddress: this.contactUsAddress
+  });
+
+  constructor(private _formBuilder: FormBuilder,private toastr: ToastrService) {
     this.setIntroData();
     this.setAboutUsData();
+    this.setProjectsData();
+    this.setReviewData();
+    this.setUpcommingProjectsData();
+    this.setContactUsData();
+    this.setprojectCaraouselData();
   }
   
   selectedOption: string = 'intro';
@@ -49,8 +140,10 @@ export class AdminComponent {
     subtitle : "Your Space. Reimagined",
     description : "At Interiorica we design residential and commercial spaces that are comfortable, personal and interesting. Great interior design is great art, reflecting who you are in ways you never imagined. Our unique perspective, grounded in both art and architecture, reflects an artist’s eye toward color and materials and a strong sense of space and form. We are artists, we are designers, and we are here to make your space better than you could have ever imagined.    ",
   }
+
   aboutUsData = this.introData;
-  projectsData: any = { /* Projects data object */ };
+  projectsData= this.introData;
+  reviewData = this.introData;
   
 
 
@@ -67,21 +160,79 @@ export class AdminComponent {
     this.aboutUsForm.controls.aboutUsPara2.setValue(this.aboutUsData.description);
   }
 
+  setprojectCaraouselData() {
+    this.individualProjectImage.main_img.image_src = "https://picsum.photos/600/400?random=1"
+    this.tag_frame.tag_name = "Tag Name";
+    this.tag_frame.image_list = ["https://picsum.photos/600/400?random=1","https://picsum.photos/600/400?random=2","https://picsum.photos/600/400?random=3","https://picsum.photos/600/400?random=4"]
+    this.individualProjectImage.main_img.tags = [this.tag_frame];
+    this.projectCarausal1 = [this.individualProjectImage];
+    console.log(this.projectCarausal1);
+  }
+
+  setProjectsData() {
+    this.projectForm.controls.projectTitle.setValue(this.projectsData.title);
+    this.projectForm.controls.projectSubtitle.setValue(this.projectsData.subtitle);
+    this.projectForm.controls.projectDescription.setValue(this.projectsData.description);
+  }
+
+  setReviewData() {
+    this.reviewForm.controls.reviewTitle.setValue(this.reviewData.title);
+    this.reviewForm.controls.reviewSubtitle.setValue(this.reviewData.subtitle);
+    this.reviewForm.controls.reviewDescription.setValue(this.reviewData.description);
+  }
+
+  setUpcommingProjectsData() {
+    this.upcommingProjectList.minor_projects =  ['https://picsum.photos/600/400?random=1','https://picsum.photos/600/400?random=2','https://picsum.photos/600/400?random=3','https://picsum.photos/600/400?random=4']
+    this.upcommingProjectList.major_projects = 'https://picsum.photos/600/400?random=5'
+  }
+
+  setContactUsData() {
+    this.contactUsForm.controls.contactUsEmail.setValue('satyam@gmail.com');
+    this.contactUsForm.controls.contactUsPhone.setValue('1234567890');
+    this.contactUsForm.controls.contactUsAddress.setValue('123, ABC Street, XYZ City, 123456');
+  }
+
   // Function to show form based on selected option
   showForm(option: string) {
     this.selectedOption = option;
   }
 
-  imagesPreview(event:any,type:string) {
-    const file = event.target.files[0]; // Get the uploaded file
-    // Read file data as data URL
+  imagesPreview(event:any,type:string,id=1,subtype='',subtype_2 ='') {
+    console.log(id)
+    console.log(subtype)
+    console.log(subtype_2)
+    console.log(type)
+    const file = event.target.files[0]; 
     const reader = new FileReader();
     reader.onload = (e: any) => {
+      console.log(type)
       if (type == 'intro') this.introImage = e.target.result;
       else if (type == 'about_us') this.aboutUsImage = e.target.result;
-    };
+      else if (type == 'real_life_reviews') this.updatedReviewBackgroundImage = e.target.result;
+      else if  (type == 'reviews'){
+        console.log(id);
+        this.reviewList[id].client_image = e.target.result;
+      }
+      else if (type == 'add_reviews'){
+        this.newReview.client_image = e.target.result;
+      }
+      else if (type == 'upcomming_projects'){
+        if(subtype == 'major'){
+          this.upcommingProjectList.major_projects = e.target.result;
+        }else{
+          this.upcommingProjectList.minor_projects[id] = e.target.result;
+        }
+      }
+      else if(type == 'project_display'){
+        console.log(id);
+        if (subtype == 'main_img' && subtype_2 == 'image_src'){
+          console.log(id);
+          this.projectCarausal1[id].main_img.image_src = e.target.result;
+      }
+     }
     reader.readAsDataURL(file);
     this.selectFileInput.nativeElement.value = null; 
+  }
 }
   // Function to update Intro data
   updateIntro() {
@@ -90,6 +241,7 @@ export class AdminComponent {
     console.log(this.introForm.value.introSubtitle);
     console.log(this.introForm.value.introDescription);
     console.log(this.introImage);
+    this.toastr.success('Updated intro successfully');
   }
 
   // Function to update About Us data
@@ -98,12 +250,71 @@ export class AdminComponent {
     console.log(this.aboutUsForm.value.aboutUsPara1);
     console.log(this.aboutUsForm.value.aboutUsPara2);
     console.log(this.aboutUsImage);
+    this.toastr.success('Updated about us successfully');
   }
 
   // Function to update Projects data
-  updateProjects(data: any) {
-    // Update projectsData object with new data
-    this.projectsData = { ...this.projectsData, ...data };
+  updateProjects() {
+    console.log(this.projectForm.value.projectTitle);
+    console.log(this.projectForm.value.projectSubtitle);
+    console.log(this.projectForm.value.projectDescription);
+    console.log(this.updatedProjectUrlList);
+    this.toastr.success('Updated projects successfully');
+  }
+
+  updateRealLifeReviews() {
+    console.log(this.reviewForm.value.reviewTitle);
+    console.log(this.reviewForm.value.reviewSubtitle);
+    console.log(this.reviewForm.value.reviewDescription);
+    console.log(this.updatedReviewBackgroundImage);
+    this.toastr.success('Updated real life reviews successfully');
+  }
+
+  updateReviews() {
+    console.log(this.reviewList);
+    this.toastr.success('Review Updated Successfully');
+  }
+  deleteReview(id: number) {
+    var index = this.reviewList.findIndex(x => x.id == id);
+    this.reviewList.splice(index,1);
+    this.toastr.success('Review deleted Successfully');
+  }
+
+  switchReviewTab(type = 'addReview'){
+    this.selectedReviewOption = type;
+  }
+
+  addReview() {
+    var index = this.reviewList.length + 1;
+    this.newReview.id = index;
+    this.reviewList.push(this.newReview);
+    this.toastr.success('Review Added Successfully');
+  }
+
+  updateUpcommingProjects() {
+    console.log(this.upcommingProjectList);
+    this.toastr.success('Upcomming Projects Updated Successfully');
+  }
+
+  updateContactUs() {
+    console.log(this.contactUsForm.value.contactUsEmail);
+    console.log(this.contactUsForm.value.contactUsPhone);
+    console.log(this.contactUsForm.value.contactUsAddress);
+    this.toastr.success('Contact Us Updated Successfully');
+  }
+
+  updateProjectsDisplay() {
+    console.log(this.projectCarausal1);
+    this.toastr.success('Projects Display Updated Successfully');
+  }
+
+  addProjectsDisplay(){
+    this.projectCarausal1.push(this.individualProjectImage);
+    this.toastr.success('Projects Display Added Successfully');
+  }
+
+  switchProjectDisplay(type = 'update'){
+    this.selectedProjectOption = type;
   }
 
 }
