@@ -4,7 +4,7 @@
     <div class="options mt-3 ml-2">
       <button class="btn btn-primary mr-2" (click)="showForm('intro')">Intro</button>
       <button class="btn btn-primary mr-2" (click)="showForm('aboutUs')">About Us</button>
-      <button class="btn btn-primary mr-2" (click)="showForm('residential_design')">Residentail Design</button>
+      <button class="btn btn-primary mr-2" (click)="showForm('residential_design')">Residential Design</button>
       <button class="btn btn-primary mr-2" (click)="showForm('commercial_design')">Commercial Design</button>
       <button class="btn btn-primary mr-2" (click)="showForm('projects')">Projects</button>
       <button class="btn btn-primary mr-2" (click)="showForm('real_life_reviews')">Real Life reviews Section</button>
@@ -19,90 +19,190 @@
       <ng-container *ngIf="selectedOption === 'intro'">
         <form [formGroup]="introForm">
           <div class="form-group row">
-            <label for="title" style="margin-right: 125px;">Title </label>
+            <label for="title" style="margin-right: 125px;"><b>Title</b></label>
             <input class="form-control" type="text" name="title" formControlName="introTitle" name="title">
           </div>
           <div class="form-group row">
-            <label for="subtitle" style="margin-right: 100px;">Subtitle </label>
+            <label for="subtitle" style="margin-right: 100px;"><b>Subtitle</b></label>
             <input class="form-control"  type="text" formControlName="introSubtitle" name="introSubtitle">
           </div>
           <div class="form-group row">
-            <label for="introDescription" style="margin-right: 100px;">Description </label>
+            <label for="introDescription" style="margin-right: 100px;"><b>Description</b></label>
             <textarea class="form-control" class="form-control" formControlName ="introDescription" aria-label="With textarea" style="height: 150px;"></textarea>
           </div> 
           <div class="form-group row" style="cursor:pointer;">
-            <label for="image">Image</label>
+            <label for="image"><b>Image</b></label>
             <img class="preview-image" [src]="introImage ? introImage : currentIntroImage" (click)="selectFileInput.click()">
             <input #selectFileInput type="file" (change)="imagesPreview($event,'intro')" id="file-input" name="file-input" style="display: none;">
           </div>
         </form>
-        <button type="submit" class="btn btn-primary" (click)="updateIntro()" >Update Intro</button>
+        <button type="submit" class="btn btn-success" (click)="updateIntro()">Update Intro</button>
+        <br><br><br>
       </ng-container>
       <ng-container *ngIf="selectedOption === 'aboutUs'">
         <form [formGroup]="aboutUsForm">
           <div class="form-group row">
-            <label for="aboutUsTitle" style="margin-right: 125px;">Title </label>
+            <label for="aboutUsTitle" style="margin-right: 125px;"><b>Title</b> </label>
             <input class="form-control" type="text" name="aboutUsTitle" formControlName="aboutUsTitle" >
           </div>
           <div class="form-group row">
-            <label for="aboutUsPara1" style="margin-right: 100px;">Para 1 </label>
+            <label for="aboutUsPara1" style="margin-right: 100px;"><b>Paragraph 1</b></label>
             <input class="form-control"  type="text" formControlName="aboutUsPara1" name="aboutUsPara1">
           </div>
           <div class="form-group row">
-            <label for="aboutUsPara2" style="margin-right: 100px;">Para 2 </label>
+            <label for="aboutUsPara2" style="margin-right: 100px;"><b>Paragraph 2 </b></label>
             <textarea class="form-control" class="form-control" formControlName ="aboutUsPara2" aria-label="With textarea" style="height: 150px;"></textarea>
           </div> 
           <div class="form-group row" style="cursor:pointer;">
-            <label for="image">Image</label>
+            <label for="image"><b>Image</b></label>
             <img class="preview-image" [src]="aboutUsImage ? aboutUsImage : currnetAboutUsImage" (click)="selectFileInput.click()">
             <input #selectFileInput type="file" (change)="imagesPreview($event,'about_us')" id="file-input" name="file-input" style="display: none;">
           </div>
         </form>
-        <button type="submit" class="btn btn-primary" (click)="updateIntro()" >Update About US</button>
+        <button type="submit" class="btn btn-success" (click)="updateIntro()" >Update About US</button>
+        <br><br><br>
+      </ng-container>
+      <ng-container *ngIf="selectedOption =='residential_design'">
+        <div>
+          <br><hr><p style="text-align: center;"><b style="font-size: 40px">Residential Design</b></p><hr><br>
+        <p><b style="font-size: 40px">Carausal Images</b></p>
+        <div *ngFor="let image of projectCarausal1.image_list;let image_index = index">
+          <div class="form-group row">
+            <img style="margin-bottom: 20px;cursor: pointer;" class="preview-image" [src]="image ? image : null" (click)="selectFileInput.click()">
+            <input #selectFileInput type="file" (change)="imagesPreview($event,'project_display',image_index,'image_list')" id="file-input" name="file-input" style="display: none;">
+            <br>
+          </div>
+        </div>
+        <hr>
+        <p><b style="font-size: 40px;">Tags</b></p>
+        <hr>
+        <div *ngFor="let tag of projectCarausal1.tags;let tag_index = index">
+          <ul>
+            <li style="font-size: 20px;">Tag</li>
+          </ul>
+          <div>
+          </div>
+          <input type="text" class="form-control" [(ngModel)]="tag.tag_name" style="margin-bottom: 20px;">
+          <div *ngFor="let image_item of tag.image_list;let image_index = index">
+            <div class="form-group row">
+              <img style="margin-bottom: 20px;cursor: pointer;" class="preview-image" [src]="image_item ? image_item : null" (click)="selectFileInput.click()">
+              <input #selectFileInput type="file" (change)="imagesPreview($event,'project_display',tag_index,'tags','image_list',image_index)" id="file-input" name="file-input" style="display: none;">
+              <br>
+              <button style="width: 96%;margin: 2%;" type="submit" class="btn  btn-danger" (click)="deleteTagImage(tag_index,image_index)">Delete Image</button>
+              <br><br>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="form-group row"> 
+              <label> New Tag Image</label> 
+              <input type="file" (change)="imagesPreview($event,'project_display',tag_index,'tags','addImage',0)" id="file-input" name="file-input" >
+            </div>
+          </div>
+          <br><hr><br>
+        </div>
+        <button type="submit" class="btn btn-primary mr-2" (click)="addNewtag()">Add New Tag</button>
+        <button type="submit" class="btn btn-success mr-2" (click)="updateProjectsDisplay('residential_design')">Update Residential Design</button>
+        </div>
+        <div *ngIf="selectedProjectOption == 'add'">
+          <p> Add a New Project</p>
+        </div>
+        <br><br><br>
+      </ng-container>
+      <ng-container *ngIf="selectedOption =='commercial_design'">
+        <div>
+          <br><hr><p style="text-align: center;"><b style="font-size: 40px">Commercial Design</b></p><hr><br>
+        <p><b style="font-size: 40px">Carausal Images</b></p>
+        <div *ngFor="let image of projectCarausal1.image_list;let image_index = index">
+          <div class="form-group row">
+            <img style="margin-bottom: 20px;cursor: pointer;" class="preview-image" [src]="image ? image : null" (click)="selectFileInput.click()">
+            <input #selectFileInput type="file" (change)="imagesPreview($event,'project_display',image_index,'image_list')" id="file-input" name="file-input" style="display: none;">
+            <br>
+          </div>
+        </div>
+        <hr>
+        <p><b style="font-size: 40px;">Tags</b></p>
+        <hr>
+        <div *ngFor="let tag of projectCarausal1.tags;let tag_index = index">
+          <ul>
+            <li style="font-size: 20px;">Tag</li>
+          </ul>
+          <div>
+          </div>
+          <input type="text" class="form-control" [(ngModel)]="tag.tag_name" style="margin-bottom: 20px;">
+          <div *ngFor="let image_item of tag.image_list;let image_index = index">
+            <div class="form-group row">
+              <img style="margin-bottom: 20px;cursor: pointer;" class="preview-image" [src]="image_item ? image_item : null" (click)="selectFileInput.click()">
+              <input #selectFileInput type="file" (change)="imagesPreview($event,'project_display',tag_index,'tags','image_list',image_index)" id="file-input" name="file-input" style="display: none;">
+              <br>
+              <button  style="width: 96%;margin: 2%;" type="submit" class="btn  btn-danger" (click)="deleteTagImage(tag_index,image_index)">Delete Image</button>
+              <br><br>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="form-group row"> 
+              <label> New Tag Image</label> 
+              <input type="file" (change)="imagesPreview($event,'project_display',tag_index,'tags','addImage',0)" id="file-input" name="file-input" >
+            </div>
+          </div>
+          <br><hr><br>
+        </div>
+        <button type="submit" class="btn btn-primary mr-2" (click)="addNewtag()">Add New Tag</button>
+        <button type="submit" class="btn btn-success mr-2" (click)="updateProjectsDisplay('commercial_design')">Update Commercial Design</button>
+        </div>
+        <div *ngIf="selectedProjectOption == 'add'">
+          <p> Add a New Project</p>
+        </div>
+        <br><br><br>
       </ng-container>
       <ng-container *ngIf="selectedOption === 'projects'">
         <form [formGroup]="projectForm">
           <div class="form-group row">
-            <label for="aboutUsTitle" style="margin-right: 125px;">Title </label>
+            <label for="aboutUsTitle" style="margin-right: 125px;"><b>Title</b></label>
             <input class="form-control" type="text" name="aboutUsTitle" formControlName="projectTitle" >
           </div>
           <div class="form-group row">
-            <label for="aboutUsPara1" style="margin-right: 100px;">Subtitle</label>
+            <label for="aboutUsPara1" style="margin-right: 100px;"><b>Subtitle</b></label>
             <input class="form-control"  type="text" formControlName="projectSubtitle" name="projectSubtitle">
           </div>
           <div class="form-group row">
-            <label for="aboutUsPara2" style="margin-right: 100px;">Description </label>
+            <label for="aboutUsPara2" style="margin-right: 100px;"><b>Description</b></label>
             <textarea class="form-control" class="form-control" formControlName ="projectDescription" aria-label="With textarea" style="height: 150px;"></textarea>
           </div> 
           <div class="form-group row">
-            <label for="aboutUsPara2" style="margin-right: 100px;">Project Link </label>
+            <label for="aboutUsPara2" style="margin-right: 100px;"><b>Project Link</b></label>
             <ng-select  [items]="projectUrlList" name="updatedProjectUrlList" placeholder="Select Project Link" [searchable]="true" [multiple]=true
             [closeOnSelect]="false" [clearSearchOnAdd]="true"  addTagText="Add New link" [addTag]="true" [(ngModel)]="updatedProjectUrlList" [ngModelOptions]="{standalone: true}"></ng-select>
           </div>
         </form>
-        <button type="submit" class="btn btn-primary" (click)="updateProjects()" >Update Projects data</button>
+        <button type="submit" class="btn btn-success" (click)="updateProjects()">Update Projects data</button>
+        <br>
+        <br>
+        <br>
       </ng-container>
       <ng-container *ngIf="selectedOption === 'real_life_reviews'">
         <form [formGroup]="reviewForm">
           <div class="form-group row">
-            <label for="title" style="margin-right: 125px;">Title </label>
+            <label for="title" style="margin-right: 125px;"><b>Title</b></label>
             <input class="form-control" type="text" name="title" formControlName="reviewTitle" name="title">
           </div>
           <div class="form-group row">
-            <label for="reviewSubtitle" style="margin-right: 100px;">Subtitle </label>
+            <label for="reviewSubtitle" style="margin-right: 100px;"><b>Subtitle</b></label>
             <input class="form-control"  type="text" formControlName="reviewSubtitle" name="reviewSubtitle">
           </div>
           <div class="form-group row">
-            <label for="reviewDescription" style="margin-right: 100px;">Description </label>
+            <label for="reviewDescription" style="margin-right: 100px;"><b>Description</b></label>
             <textarea class="form-control" class="form-control" formControlName ="reviewDescription" aria-label="With textarea" style="height: 150px;"></textarea>
           </div> 
           <div class="form-group row" style="cursor:pointer;">
-            <label for="image">Image</label>
+            <label for="image"><b>Image</b></label>
             <img class="preview-image" [src]="updatedReviewBackgroundImage ? updatedReviewBackgroundImage : reviewBackgroundImage" (click)="selectFileInput.click()">
             <input #selectFileInput type="file" (change)="imagesPreview($event,'real_life_reviews')" id="file-input" name="file-input" style="display: none;">
           </div>
         </form>
-        <button type="submit" class="btn btn-primary" (click)="updateRealLifeReviews()" >Update Intro</button>
+        <button type="submit" class="btn btn-success" (click)="updateRealLifeReviews()">Update Reviews</button>
+        <br><br><br>
       </ng-container>
       <ng-container *ngIf="selectedOption === 'reviews'">
         <button type="submit" class="btn btn-primary mr-2" (click)="switchReviewTab('addReview')" >Add Review</button>
@@ -111,163 +211,79 @@
           <div *ngFor="let review of reviewList">
             <hr>
             <div class="form-group row">
-              <label for="reviewTitle" style="margin-right: 125px;">Name </label>
+              <label for="reviewTitle" style="margin-right: 125px;"><b>Name</b></label>
               <input class="form-control" type="text" name="reviewTitle"  [(ngModel)]="review.client_name">
             </div>
             <div class="form-group row">
-              <label for="reviewDescription" style="margin-right: 100px;">Description </label>
+              <label for="reviewDescription" style="margin-right: 100px;"><b>Description</b></label>
               <textarea  aria-label="With textarea" style="height: 150px;" [(ngModel)]="review.review"></textarea>
             </div> 
             <div class="form-group row" style="cursor:pointer;">
-              <label for="image">Image</label>
+              <label for="image"><b>Image</b></label>
               <img class="preview-image" [src]="review.client_image" (click)="selectFileInput.click()">
               <input #selectFileInput type="file" (change)="imagesPreview($event,'reviews',review.id)" id="file-input" name="file-input" style="display: none;">
             </div>
-            <hr>
-            <button type="submit" class="btn btn-primary mr-3" (click)="updateReviews()" >Update review</button>
-            <button type="submit" class="btn btn-danger" (click)="deleteReview(review.id)" >Delete review</button>
+            <div class="form-group row">
+              <button type="submit" style="margin-bottom: 20px;" class="btn btn-success mr-3" (click)="updateReviews()" >Update review</button>
+              <button type="submit" class="btn btn-danger" (click)="deleteReview(review.id)">Delete review</button>
+            </div>
           </div>
         </div>
         <div *ngIf="selectedReviewOption == 'addReview'">
-            <div class="form-group row">
-              <label for="title" style="margin-right: 125px;">Client Name </label>
-              <input type="text" name="title" [(ngModel)]="newReview.client_name" name="title">
-            </div>
-            <div class="form-group row">
-              <label for="introDescription" style="margin-right: 100px;">Description </label>
-              <textarea class="form-control" class="form-control" [(ngModel)]="newReview.review" aria-label="With textarea" style="height: 150px;"></textarea>
-            </div> 
-            <div class="form-group row" style="cursor:pointer;">
-              <label for="image">Image</label>
-              <img class="preview-image" [src]="newReview.client_image?newReview.client_image:'data:image/png;base64,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'" (click)="selectFileInput.click()">
-              <input #selectFileInput type="file" (change)="imagesPreview($event,'add_reviews')" id="file-input" name="file-input" style="display: none;">
-            </div>
-          <button type="submit" class="btn btn-primary" (click)="addReview()" >Add Review</button>
+          <br><br>
+          <div class="form-group row">
+            <label for="title" style="margin-right: 125px;"><b>Reviewer Name</b></label>
+            <input class="form-control" style="width: 96%;margin: 2%;" type="text" name="title" [(ngModel)]="newReview.client_name" name="title">
+          </div>
+          <div class="form-group row">
+            <label for="introDescription" style="margin-right: 100px;"><b>Review</b></label>
+            <textarea class="form-control" style="height: 150px;width: 96% !important;margin: 2% !important;" [(ngModel)]="newReview.review" aria-label="With textarea" ></textarea>
+          </div> 
+          <div class="form-group row" style="cursor:pointer;">
+            <label for="image"><b>Image</b></label>
+            <img class="preview-image" [src]="newReview.client_image?newReview.client_image:'data:image/png;base64,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'" (click)="selectFileInput.click()">
+            <input #selectFileInput type="file" (change)="imagesPreview($event,'add_reviews')" id="file-input" name="file-input" style="display: none;">
+          </div><br>
+          <div class="form-group row"><button style="width: 96%;margin: 2%;" type="submit" class="btn btn-success" (click)="addReview()" >Add Review</button></div><br><br><br>
         </div>
       </ng-container>
       <ng-container *ngIf="selectedOption == 'upcomming_projects'">
-        <p>Upcomming Projects</p>
-        <div *ngFor="let minor_project_image of upcommingProjectList.minor_projects; let i = index">
-          <div class="col-md-4">
-              <img style="margin-bottom: 20px;" class="preview-image" [src]=" minor_project_image ? minor_project_image  : null" (click)="selectFileInput.click()">
-              <input #selectFileInput type="file" (change)="imagesPreview($event,'upcomming_projects',i)" id="file-input" name="file-input" style="display: none;">
+        <div class="form-group row" style="cursor:pointer;">
+          <br><hr><p style="text-align: center;"><b style="font-size: 40px">Upcomming Projects</b></p><hr><br>
+          <div *ngFor="let minor_project_image of upcommingProjectList.minor_projects; let i = index">
+            <div class="form-group row">
+                <img style="margin-bottom: 20px;" class="preview-image" [src]=" minor_project_image ? minor_project_image  : null" (click)="selectFileInput.click()">
+                <input #selectFileInput type="file" (change)="imagesPreview($event,'upcomming_projects',i)" id="file-input" name="file-input" style="display: none;">
+                <br>
+              </div>
+          </div>
+          <hr>
+          <p><b>Active Project</b></p><br>
+          <hr>
+            <div class="form-group row" style="cursor:pointer;">
+              <img style="margin-bottom: 20px;" class="preview-image" [src]=" upcommingProjectList.major_projects ? upcommingProjectList.major_projects  : null" (click)="selectFileInput.click()">
+              <input #selectFileInput type="file" (change)="imagesPreview($event,'upcomming_projects',0,'major')" id="file-input" name="file-input" style="display: none;">
               <br>
             </div>
+          <button type="submit" style="width: 94%;margin: 2%;" class="btn btn-success" (click)="updateUpcommingProjects()">Update Upcomming Projects</button>
         </div>
-        <p>Active Project</p>
-          <div class="col-md-4">
-            <img style="margin-bottom: 20px;" class="preview-image" [src]=" upcommingProjectList.major_projects ? upcommingProjectList.major_projects  : null" (click)="selectFileInput.click()">
-            <input #selectFileInput type="file" (change)="imagesPreview($event,'upcomming_projects',0,'major')" id="file-input" name="file-input" style="display: none;">
-            <br>
-          </div>
-        <button type="submit" class="btn btn-primary" (click)="updateUpcommingProjects()" >Update Upcomming Projects</button>
       </ng-container>
       <ng-container *ngIf="selectedOption == 'contact_us'">
         <form [formGroup]="contactUsForm">
           <div class="form-group row">
-            <label for="email" style="margin-right: 125px;">Email</label>
+            <label for="email"><b>Email</b></label>
             <input class="form-control" type="email" formControlName="contactUsEmail" name="email">
           </div>
           <div class="form-group row">
-            <label for="Address" style="margin-right: 100px;">Contact Number</label>
+            <label for="Address"><b>Contact Number</b></label>
             <input  class="form-control" type="text" formControlName="contactUsPhone" name="Address">
           </div>
           <div class="form-group row">
-            <label for="Address" style="margin-right: 100px;">Address</label>
+            <label for="Address" ><b>Address</b></label>
             <input  class="form-control" type="text" formControlName="contactUsAddress" name="Address">
           </div>
-          <button type="submit" class="btn btn-primary" (click)="updateContactUs()">Update Contact Info</button>
         </form>
-      </ng-container>
-      <ng-container *ngIf="selectedOption =='residential_design'">
-        <div >
-          <br><br><br>
-        <p><b style="font-size: 40px;margin-left: 20px;">Carausal Images</b></p>
-        <div *ngFor="let image of projectCarausal1.image_list;let image_index = index">
-          <div class="col-md-4">
-            <img style="margin-bottom: 20px;cursor: pointer;" class="preview-image" [src]="image ? image : null" (click)="selectFileInput.click()">
-            <input #selectFileInput type="file" (change)="imagesPreview($event,'project_display',image_index,'image_list')" id="file-input" name="file-input" style="display: none;">
-            <br>
-          </div>
-        </div>
-        <hr style="width: 125%;">
-        <p><b style="font-size: 40px;margin-left: 20px;">Tags</b></p>
-        <hr style="width: 125%;">
-        <div *ngFor="let tag of projectCarausal1.tags;let tag_index = index">
-          <ul>
-            <li style="font-size: 20px;">Tag</li>
-          </ul>
-          <div>
-          </div>
-          <input type="text" class="form-control" [(ngModel)]="tag.tag_name" style="margin-bottom: 20px;">
-          <div *ngFor="let image_item of tag.image_list;let image_index = index">
-            <div class="col-md-4">
-              <img style="margin-bottom: 20px;cursor: pointer;" class="preview-image" [src]="image_item ? image_item : null" (click)="selectFileInput.click()">
-              <input #selectFileInput type="file" (change)="imagesPreview($event,'project_display',tag_index,'tags','image_list',image_index)" id="file-input" name="file-input" style="display: none;">
-              <br>
-              <button type="submit" class="btn  btn-danger" (click)="deleteTagImage(tag_index,image_index)">Delete Image</button>
-              <br><br>
-            </div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-md-6"> Add New Tag Image
-              <input  type="file" (change)="imagesPreview($event,'project_display',tag_index,'tags','addImage',0)" id="file-input" name="file-input" >
-            </div>
-          </div>
-          <br><hr style="width: 125%;"><br>
-        </div>
-        <button type="submit" class="btn btn-primary mr-2" (click)="addNewtag()">Add New Tag</button>
-        <button type="submit" class="btn btn-primary mr-2" (click)="updateProjectsDisplay()">Update Projects Display</button>
-        </div>
-        <div *ngIf="selectedProjectOption == 'add'">
-          <p> Add a New Project</p>
-        </div>
-      </ng-container>
-      <ng-container *ngIf="selectedOption =='commercial_design'">
-        <div >
-          <br><br><br>
-        <p><b style="font-size: 40px;margin-left: 20px;">Carausal Images</b></p>
-        <div *ngFor="let image of projectCarausal1.image_list;let image_index = index">
-          <div class="col-md-4">
-            <img style="margin-bottom: 20px;cursor: pointer;" class="preview-image" [src]="image ? image : null" (click)="selectFileInput.click()">
-            <input #selectFileInput type="file" (change)="imagesPreview($event,'project_display',image_index,'image_list')" id="file-input" name="file-input" style="display: none;">
-            <br>
-          </div>
-        </div>
-        <hr style="width: 125%;">
-        <p><b style="font-size: 40px;margin-left: 20px;">Tags</b></p>
-        <hr style="width: 125%;">
-        <div *ngFor="let tag of projectCarausal1.tags;let tag_index = index">
-          <ul>
-            <li style="font-size: 20px;">Tag</li>
-          </ul>
-          <div>
-          </div>
-          <input type="text" class="form-control" [(ngModel)]="tag.tag_name" style="margin-bottom: 20px;">
-          <div *ngFor="let image_item of tag.image_list;let image_index = index">
-            <div class="col-md-4">
-              <img style="margin-bottom: 20px;cursor: pointer;" class="preview-image" [src]="image_item ? image_item : null" (click)="selectFileInput.click()">
-              <input #selectFileInput type="file" (change)="imagesPreview($event,'project_display',tag_index,'tags','image_list',image_index)" id="file-input" name="file-input" style="display: none;">
-              <br>
-              <button type="submit" class="btn  btn-danger" (click)="deleteTagImage(tag_index,image_index)">Delete Image</button>
-              <br><br>
-            </div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-md-6"> Add New Tag Image
-              <input  type="file" (change)="imagesPreview($event,'project_display',tag_index,'tags','addImage',0)" id="file-input" name="file-input" >
-            </div>
-          </div>
-          <br><hr style="width: 125%;"><br>
-        </div>
-        <button type="submit" class="btn btn-primary mr-2" (click)="addNewtag()">Add New Tag</button>
-        <button type="submit" class="btn btn-primary mr-2" (click)="updateProjectsDisplay()">Update Projects Display</button>
-        </div>
-        <div *ngIf="selectedProjectOption == 'add'">
-          <p> Add a New Project</p>
-        </div>
+        <button type="submit" class="btn btn-success" (click)="updateContactUs()">Update Contact Info</button>
       </ng-container>
       </div>
     </div>

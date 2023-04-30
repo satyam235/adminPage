@@ -6,6 +6,7 @@ import {
   FormControl
 } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { AdminService } from "../services/admin.service";
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
@@ -131,14 +132,15 @@ export class AdminComponent  {
     contactUsAddress: this.contactUsAddress
   });
   tag_name = "";
-  constructor(private _formBuilder: FormBuilder,private toastr: ToastrService) {
-    this.setIntroData();
-    this.setAboutUsData();
+  constructor(private _formBuilder: FormBuilder,private toastr: ToastrService,private adminService: AdminService,) {
+    this.fetchIntroData();
+    this.fetchAboutUsData();
     this.setProjectsData();
     this.setReviewData();
     this.setUpcommingProjectsData();
     this.setContactUsData();
-    this.setprojectCaraouselData();
+    this.fetchResidentialDesignData();
+    this.fetchCommercialDesignData();
   }
   
   selectedOption: string = 'intro';
@@ -155,69 +157,37 @@ export class AdminComponent  {
 
 
   // Function to set intro data
-  setIntroData() {
+  fetchIntroData() {
     this.introForm.controls.introTitle.setValue(this.introData.title);
     this.introForm.controls.introSubtitle.setValue(this.introData.subtitle);
     this.introForm.controls.introDescription.setValue(this.introData.description);
   }
 
-  setAboutUsData() {
+  fetchAboutUsData() {
     this.aboutUsForm.controls.aboutUsTitle.setValue(this.aboutUsData.title);
     this.aboutUsForm.controls.aboutUsPara1.setValue(this.aboutUsData.subtitle);
     this.aboutUsForm.controls.aboutUsPara2.setValue(this.aboutUsData.description);
   }
 
-  setprojectCaraouselData() {
-    // var data = [
-    //   {
-    //     "main_img" : "https://picsum.photos/600/400?random=1",
-    //     "tags" : [
-    //       {
-    //         "tag_name" : "Kitchen",
-    //         "image_list" : ["https://picsum.photos/600/400?random=1","https://picsum.photos/600/400?random=2"]
-    //       },
-    //       {
-    //         "tag_name" : "Bedroom",
-    //         "image_list" : ["https://picsum.photos/600/400?random=3","https://picsum.photos/600/400?random=4"]
-    //       }
-    //     ]
-    //   },
-    //   {
-    //     "main_img" : "https://picsum.photos/600/400?random=2",
-    //     "tags" : [
-    //       {
-    //         "tag_name" : "Hall",
-    //         "image_list" : ["https://picsum.photos/600/400?random=1","https://picsum.photos/600/400?random=2"]
-    //       },{
-    //         "tag_name" : "Bedroom",
-    //         "image_list" : ["https://picsum.photos/600/400?random=3","https://picsum.photos/600/400?random=4"]
-    //       }
-    //     ]
-    //   },
-    //   {
-    //     "main_img" : "https://picsum.photos/600/400?random=3",
-    //     "tags" : [
-    //       {
-    //         "tag_name" : "Kitchen",
-    //         "image_list" : ["https://picsum.photos/600/400?random=1","https://picsum.photos/600/400?random=2"]
-    //       },{
-    //         "tag_name" : "Hall",
-    //         "image_list" : ["https://picsum.photos/600/400?random=3","https://picsum.photos/600/400?random=4"]
-    //       }
-    //     ]
-    //   }
-    // ]
-    // this.individualProjectImage.main_img.image_src = "https://picsum.photos/600/400?random=1"
-    // this.tag_frame.tag_name = "Tag 1";
-    // this.tag_frame.image_list = ["https://picsum.photos/600/400?random=1","https://picsum.photos/600/400?random=2","https://picsum.photos/600/400?random=3","https://picsum.photos/600/400?random=4"]
-    // this.individualProjectImage.main_img.tags = [this.tag_frame];
-    // this.projectCarausal1 = [this.individualProjectImage];
-    // this.individualProjectImage.main_img.image_src = "https://picsum.photos/600/400?random=1"
-    // this.tag_frame.tag_name = "Tag 2";
-    // this.tag_frame.image_list = ["https://picsum.photos/600/400?random=1","https://picsum.photos/600/400?random=2","https://picsum.photos/600/400?random=3","https://picsum.photos/600/400?random=4"]
-    // this.individualProjectImage.main_img.tags = [this.tag_frame];
-    // this.projectCarausal1.push(this.individualProjectImage);
-    // console.log(this.projectCarausal1);
+  fetchResidentialDesignData() {
+    var data = {
+      "image_list" : ["https://picsum.photos/600/400?random=1","https://picsum.photos/600/400?random=2","https://picsum.photos/600/400?random=3","https://picsum.photos/600/400?random=4","https://picsum.photos/600/400?random=5"],
+      "tags" : [{
+        "tag_name" : "Kitchen",
+        "image_list" : ["https://picsum.photos/600/400?random=1","https://picsum.photos/600/400?random=2"]        
+      },{
+        "tag_name" : "Bedroom",
+        "image_list" : ["https://picsum.photos/600/400?random=3","https://picsum.photos/600/400?random=4"]
+      },{
+        "tag_name" : "Hall",
+        "image_list" : ["https://picsum.photos/600/400?random=5","https://picsum.photos/600/400?random=6"]
+      }]
+    }
+    this.projectCarausal1 = data;
+    console.log(this.projectCarausal1);
+  }
+
+  fetchCommercialDesignData()  {
     var data = {
       "image_list" : ["https://picsum.photos/600/400?random=1","https://picsum.photos/600/400?random=2","https://picsum.photos/600/400?random=3","https://picsum.photos/600/400?random=4","https://picsum.photos/600/400?random=5"],
       "tags" : [{
@@ -264,18 +234,13 @@ export class AdminComponent  {
   }
 
   imagesPreview(event:any,type:string,id=1,subtype='',subtype_2 ='',id_2=0,id_3=0) {
-    console.log(id)
-    console.log(subtype)
-    console.log(subtype_2)
-    console.log(type)
     const file = event.target.files[0]; 
     const reader = new FileReader();
     reader.onload = (e: any) => {
       if (type == 'intro') this.introImage = e.target.result;
       else if (type == 'about_us') this.aboutUsImage = e.target.result;
       else if (type == 'real_life_reviews') this.updatedReviewBackgroundImage = e.target.result;
-      else if  (type == 'reviews'){
-        
+      else if  (type == 'reviews'){ 
         this.reviewList[id].client_image = e.target.result;
       }
       else if (type == 'add_reviews'){
@@ -300,7 +265,6 @@ export class AdminComponent  {
             this.projectCarausal1.tags[id].image_list.push(e.target.result);
           }
         }
-        console.log(this.projectCarausal1);
      };
     }
     reader.readAsDataURL(file);
@@ -314,6 +278,7 @@ export class AdminComponent  {
     console.log(this.introForm.value.introSubtitle);
     console.log(this.introForm.value.introDescription);
     console.log(this.introImage);
+    // API call to update introData
     this.toastr.success('Updated intro successfully');
   }
 
@@ -345,11 +310,14 @@ export class AdminComponent  {
 
   updateReviews() {
     console.log(this.reviewList);
+    // api call to update an exising review
     this.toastr.success('Review Updated Successfully');
   }
+
   deleteReview(id: number) {
     var index = this.reviewList.findIndex(x => x.id == id);
     this.reviewList.splice(index,1);
+    // api call to delete a review
     this.toastr.success('Review deleted Successfully');
   }
 
@@ -361,6 +329,7 @@ export class AdminComponent  {
     var index = this.reviewList.length + 1;
     this.newReview.id = index;
     this.reviewList.push(this.newReview);
+    // APi call to add a review
     this.toastr.success('Review Added Successfully');
   }
 
@@ -376,9 +345,17 @@ export class AdminComponent  {
     this.toastr.success('Contact Us Updated Successfully');
   }
 
-  updateProjectsDisplay() {
-    console.log(this.projectCarausal1);
-    this.toastr.success('Projects Display Updated Successfully');
+  updateProjectsDisplay(type:string) {
+    if(type == 'commercial_design'){
+      console.log("commercial_design");
+      console.log(this.projectCarausal1);
+      this.toastr.success('Commercial Design Section Updated Successfully');
+    }
+    else if(type == 'residential_design'){
+      console.log("residential_design");
+      console.log(this.projectCarausal1);
+      this.toastr.success('Residential Design Section Updated Successfully');
+    }
   }
 
   addProjectsDisplay(){
