@@ -4,7 +4,8 @@
     <div class="options mt-3 ml-2">
       <button class="btn btn-primary mr-2" (click)="showForm('intro')">Intro</button>
       <button class="btn btn-primary mr-2" (click)="showForm('aboutUs')">About Us</button>
-      <button class="btn btn-primary mr-2" (click)="showForm('projects_display')">Projects Display</button>
+      <button class="btn btn-primary mr-2" (click)="showForm('residential_design')">Residentail Design</button>
+      <button class="btn btn-primary mr-2" (click)="showForm('commercial_design')">Commercial Design</button>
       <button class="btn btn-primary mr-2" (click)="showForm('projects')">Projects</button>
       <button class="btn btn-primary mr-2" (click)="showForm('real_life_reviews')">Real Life reviews Section</button>
       <button class="btn btn-primary mr-2" (click)="showForm('reviews')">Reviews</button>
@@ -178,77 +179,94 @@
           <button type="submit" class="btn btn-primary" (click)="updateContactUs()">Update Contact Info</button>
         </form>
       </ng-container>
-      <!-- <ng-container *ngIf="selectedOption =='projects_display'">
-        <button type="submit" class="btn btn-primary mr-2" (click)="switchProjectDisplay('update')">Update Projects Display</button>
-        <butttton type="submit" class="btn btn-primary m3-3" (click)="switchProjectDisplay('add')">Add Project</butttton>
-        <div *ngIf="selectedProjectOption == 'update'">
-            <div *ngFor="let project of projectCarausal1 ; let i = index ">
-              <p>Main Project Image</p>
-              <div class="col-md-4">
-                <img style="margin-bottom: 20px;cursor: pointer;" class="preview-image" [src]="project.main_img.image_src ? project.main_img.image_src : null" (click)="selectFileInput.click()">
-                <input #selectFileInput type="file" (change)="imagesPreview($event,'project_display',i,'main_img','image_src')" id="file-input" name="file-input" style="display: none;">
-                <br>
-              </div>
-              <div *ngFor="let tag of project.main_img.tags; let tag_index = index ">
-                <p>TAG Name</p>
-                <input type="text" class="form-control" [(ngModel)]="tag.tag_name">
-                <div *ngFor="let image_item of tag.image_list;let image_index = index">
-                  <div class="col-md-4">
-                    <img style="margin-bottom: 20px;cursor: pointer;" class="preview-image" [src]="image_item ? image_item : null" (click)="selectFileInput.click()">
-                    <input #selectFileInput type="file" (change)="imagesPreview($event,'project_display',i,'tags','image_list',tag_index,image_index)" id="file-input" name="file-input" style="display: none;">
-                    <br>
-                  </div>
-                </div>
-              </div>
-              <button type="submit" class="btn btn-primary mr-2" (click)="updateProjectsDisplay()">Update Projects Display</button>
-              <button type="submit" class="btn  btn-danger" (click)="deleteProject(i)">Delete Project</button>
+      <ng-container *ngIf="selectedOption =='residential_design'">
+        <div >
+          <br><br><br>
+        <p><b style="font-size: 40px;margin-left: 20px;">Carausal Images</b></p>
+        <div *ngFor="let image of projectCarausal1.image_list;let image_index = index">
+          <div class="col-md-4">
+            <img style="margin-bottom: 20px;cursor: pointer;" class="preview-image" [src]="image ? image : null" (click)="selectFileInput.click()">
+            <input #selectFileInput type="file" (change)="imagesPreview($event,'project_display',image_index,'image_list')" id="file-input" name="file-input" style="display: none;">
+            <br>
+          </div>
+        </div>
+        <hr style="width: 125%;">
+        <p><b style="font-size: 40px;margin-left: 20px;">Tags</b></p>
+        <hr style="width: 125%;">
+        <div *ngFor="let tag of projectCarausal1.tags;let tag_index = index">
+          <ul>
+            <li style="font-size: 20px;">Tag</li>
+          </ul>
+          <div>
+          </div>
+          <input type="text" class="form-control" [(ngModel)]="tag.tag_name" style="margin-bottom: 20px;">
+          <div *ngFor="let image_item of tag.image_list;let image_index = index">
+            <div class="col-md-4">
+              <img style="margin-bottom: 20px;cursor: pointer;" class="preview-image" [src]="image_item ? image_item : null" (click)="selectFileInput.click()">
+              <input #selectFileInput type="file" (change)="imagesPreview($event,'project_display',tag_index,'tags','image_list',image_index)" id="file-input" name="file-input" style="display: none;">
+              <br>
+              <button type="submit" class="btn  btn-danger" (click)="deleteTagImage(tag_index,image_index)">Delete Image</button>
+              <br><br>
             </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-md-6"> Add New Tag Image
+              <input  type="file" (change)="imagesPreview($event,'project_display',tag_index,'tags','addImage',0)" id="file-input" name="file-input" >
+            </div>
+          </div>
+          <br><hr style="width: 125%;"><br>
+        </div>
+        <button type="submit" class="btn btn-primary mr-2" (click)="addNewtag()">Add New Tag</button>
+        <button type="submit" class="btn btn-primary mr-2" (click)="updateProjectsDisplay()">Update Projects Display</button>
         </div>
         <div *ngIf="selectedProjectOption == 'add'">
           <p> Add a New Project</p>
-          <p>Add Main Image :</p>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="selectedOption =='commercial_design'">
+        <div >
+          <br><br><br>
+        <p><b style="font-size: 40px;margin-left: 20px;">Carausal Images</b></p>
+        <div *ngFor="let image of projectCarausal1.image_list;let image_index = index">
           <div class="col-md-4">
-            <img style="margin-bottom: 20px;cursor: pointer;" class="preview-image" [src]="individualProjectImage.main_img.image_src ? individualProjectImage.main_img.image_src : 'https://picsum.photos/600/400?random=1'" (click)="selectFileInput.click()">
-            <input #selectFileInput type="file" (change)="imagesPreview($event,'project_display',0,'main_img','image_src')" id="file-input" name="file-input" style="display: none;">
+            <img style="margin-bottom: 20px;cursor: pointer;" class="preview-image" [src]="image ? image : null" (click)="selectFileInput.click()">
+            <input #selectFileInput type="file" (change)="imagesPreview($event,'project_display',image_index,'image_list')" id="file-input" name="file-input" style="display: none;">
             <br>
           </div>
-          <p>Add Tags</p>
-          <div>
-            <label>Number of Taga to add</label>
-            <input type="number" class="form-control" [(ngModel)]="numberOfTags" (change)="addTag()">
-            <div *ngFor="let tag of numberOfTagsArray"></div>
-            //<input type="text" class="form-control" [(ngModel)]="individualProjectImage.main_img.tags[0].tag_name">
-             //
-          </div>
         </div>
-      </ng-container> -->
-
-      <ng-container *ngIf="selectedOption =='projects_display'">
-        <div *ngFor="let project of projectCarausal1; let i = index">
-            <button type="button" class="btn btn-link" (click)="project.expanded = !project.expanded">
-                {{ project.expanded ? 'Collapse' : 'Expand' }} Project {{i}}
-            </button>
-            <div *ngIf="project.expanded">
-                <p>Main Project Image</p>
-                <div class="col-md-4">
-                    <img style="margin-bottom: 20px;cursor: pointer;" class="preview-image" [src]="project.main_img.image_src ? project.main_img.image_src : null" (click)="selectFileInput.click()">
-                    <input #selectFileInput type="file" (change)="imagesPreview($event,'project_display',i,'main_img','image_src')" id="file-input" name="file-input" style="display: none;">
-                    <br>
-                </div>
-                <div *ngFor="let tag of project.main_img.tags; let tag_index = index">
-                    <p>TAG Name</p>
-                    <input type="text" class="form-control" [(ngModel)]="tag.tag_name">
-                    <div *ngFor="let image_item of tag.image_list;let image_index = index">
-                        <div class="col-md-4">
-                            <img style="margin-bottom: 20px;cursor: pointer;" class="preview-image" [src]="image_item ? image_item : null" (click)="selectFileInput.click()">
-                            <input #selectFileInput type="file" (change)="imagesPreview($event,'project_display',i,'tags','image_list',tag_index,image_index)" id="file-input" name="file-input" style="display: none;">
-                            <br>
-                        </div>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary mr-2" (click)="updateProjectsDisplay()">Update Projects Display</button>
-                <button type="submit" class="btn  btn-danger" (click)="deleteProject(i)">Delete Project</button>
+        <hr style="width: 125%;">
+        <p><b style="font-size: 40px;margin-left: 20px;">Tags</b></p>
+        <hr style="width: 125%;">
+        <div *ngFor="let tag of projectCarausal1.tags;let tag_index = index">
+          <ul>
+            <li style="font-size: 20px;">Tag</li>
+          </ul>
+          <div>
+          </div>
+          <input type="text" class="form-control" [(ngModel)]="tag.tag_name" style="margin-bottom: 20px;">
+          <div *ngFor="let image_item of tag.image_list;let image_index = index">
+            <div class="col-md-4">
+              <img style="margin-bottom: 20px;cursor: pointer;" class="preview-image" [src]="image_item ? image_item : null" (click)="selectFileInput.click()">
+              <input #selectFileInput type="file" (change)="imagesPreview($event,'project_display',tag_index,'tags','image_list',image_index)" id="file-input" name="file-input" style="display: none;">
+              <br>
+              <button type="submit" class="btn  btn-danger" (click)="deleteTagImage(tag_index,image_index)">Delete Image</button>
+              <br><br>
             </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-md-6"> Add New Tag Image
+              <input  type="file" (change)="imagesPreview($event,'project_display',tag_index,'tags','addImage',0)" id="file-input" name="file-input" >
+            </div>
+          </div>
+          <br><hr style="width: 125%;"><br>
+        </div>
+        <button type="submit" class="btn btn-primary mr-2" (click)="addNewtag()">Add New Tag</button>
+        <button type="submit" class="btn btn-primary mr-2" (click)="updateProjectsDisplay()">Update Projects Display</button>
+        </div>
+        <div *ngIf="selectedProjectOption == 'add'">
+          <p> Add a New Project</p>
         </div>
       </ng-container>
       </div>

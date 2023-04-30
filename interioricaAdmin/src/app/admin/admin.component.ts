@@ -40,7 +40,12 @@ export class AdminComponent  {
     tag_name : "tag1",
     image_list : [""]
   }
-  selectedProjectOption = "update"
+  selectedProjectOption = ""
+  projectDisplay1ImageCount = 0;
+  projectDisplay1TagCount = 0;
+  projectDisplay1TagArray : any;
+  imageCount = 0;
+  newTag : any;
 
   // About Us
   aboutUsTitle = new FormControl('',[]);
@@ -125,7 +130,7 @@ export class AdminComponent  {
     contactUsPhone: this.contactUsPhone,
     contactUsAddress: this.contactUsAddress
   });
-
+  tag_name = "";
   constructor(private _formBuilder: FormBuilder,private toastr: ToastrService) {
     this.setIntroData();
     this.setAboutUsData();
@@ -163,45 +168,45 @@ export class AdminComponent  {
   }
 
   setprojectCaraouselData() {
-    var data = [
-      {
-        "main_img" : "https://picsum.photos/600/400?random=1",
-        "tags" : [
-          {
-            "tag_name" : "Kitchen",
-            "image_list" : ["https://picsum.photos/600/400?random=1","https://picsum.photos/600/400?random=2"]
-          },
-          {
-            "tag_name" : "Bedroom",
-            "image_list" : ["https://picsum.photos/600/400?random=3","https://picsum.photos/600/400?random=4"]
-          }
-        ]
-      },
-      {
-        "main_img" : "https://picsum.photos/600/400?random=2",
-        "tags" : [
-          {
-            "tag_name" : "Hall",
-            "image_list" : ["https://picsum.photos/600/400?random=1","https://picsum.photos/600/400?random=2"]
-          },{
-            "tag_name" : "Bedroom",
-            "image_list" : ["https://picsum.photos/600/400?random=3","https://picsum.photos/600/400?random=4"]
-          }
-        ]
-      },
-      {
-        "main_img" : "https://picsum.photos/600/400?random=3",
-        "tags" : [
-          {
-            "tag_name" : "Kitchen",
-            "image_list" : ["https://picsum.photos/600/400?random=1","https://picsum.photos/600/400?random=2"]
-          },{
-            "tag_name" : "Hall",
-            "image_list" : ["https://picsum.photos/600/400?random=3","https://picsum.photos/600/400?random=4"]
-          }
-        ]
-      }
-    ]
+    // var data = [
+    //   {
+    //     "main_img" : "https://picsum.photos/600/400?random=1",
+    //     "tags" : [
+    //       {
+    //         "tag_name" : "Kitchen",
+    //         "image_list" : ["https://picsum.photos/600/400?random=1","https://picsum.photos/600/400?random=2"]
+    //       },
+    //       {
+    //         "tag_name" : "Bedroom",
+    //         "image_list" : ["https://picsum.photos/600/400?random=3","https://picsum.photos/600/400?random=4"]
+    //       }
+    //     ]
+    //   },
+    //   {
+    //     "main_img" : "https://picsum.photos/600/400?random=2",
+    //     "tags" : [
+    //       {
+    //         "tag_name" : "Hall",
+    //         "image_list" : ["https://picsum.photos/600/400?random=1","https://picsum.photos/600/400?random=2"]
+    //       },{
+    //         "tag_name" : "Bedroom",
+    //         "image_list" : ["https://picsum.photos/600/400?random=3","https://picsum.photos/600/400?random=4"]
+    //       }
+    //     ]
+    //   },
+    //   {
+    //     "main_img" : "https://picsum.photos/600/400?random=3",
+    //     "tags" : [
+    //       {
+    //         "tag_name" : "Kitchen",
+    //         "image_list" : ["https://picsum.photos/600/400?random=1","https://picsum.photos/600/400?random=2"]
+    //       },{
+    //         "tag_name" : "Hall",
+    //         "image_list" : ["https://picsum.photos/600/400?random=3","https://picsum.photos/600/400?random=4"]
+    //       }
+    //     ]
+    //   }
+    // ]
     // this.individualProjectImage.main_img.image_src = "https://picsum.photos/600/400?random=1"
     // this.tag_frame.tag_name = "Tag 1";
     // this.tag_frame.image_list = ["https://picsum.photos/600/400?random=1","https://picsum.photos/600/400?random=2","https://picsum.photos/600/400?random=3","https://picsum.photos/600/400?random=4"]
@@ -213,19 +218,20 @@ export class AdminComponent  {
     // this.individualProjectImage.main_img.tags = [this.tag_frame];
     // this.projectCarausal1.push(this.individualProjectImage);
     // console.log(this.projectCarausal1);
-    var projects:any  = []
-    for (let index = 0; index < data.length; index++) {
-      var individualProjectImage1 : any ={
-        main_img : {
-          image_src : "",
-          tags : []
-      }
-      }
-      individualProjectImage1.main_img.image_src = data[index].main_img;
-      individualProjectImage1.main_img.tags = data[index].tags;
-      projects.push(individualProjectImage1);
+    var data = {
+      "image_list" : ["https://picsum.photos/600/400?random=1","https://picsum.photos/600/400?random=2","https://picsum.photos/600/400?random=3","https://picsum.photos/600/400?random=4","https://picsum.photos/600/400?random=5"],
+      "tags" : [{
+        "tag_name" : "Kitchen",
+        "image_list" : ["https://picsum.photos/600/400?random=1","https://picsum.photos/600/400?random=2"]        
+      },{
+        "tag_name" : "Bedroom",
+        "image_list" : ["https://picsum.photos/600/400?random=3","https://picsum.photos/600/400?random=4"]
+      },{
+        "tag_name" : "Hall",
+        "image_list" : ["https://picsum.photos/600/400?random=5","https://picsum.photos/600/400?random=6"]
+      }]
     }
-    this.projectCarausal1 = projects;
+    this.projectCarausal1 = data;
     console.log(this.projectCarausal1);
   }
 
@@ -283,12 +289,16 @@ export class AdminComponent  {
         }
       }
       else if(type == 'project_display'){
-        if (subtype == 'main_img' && subtype_2 == 'image_src'){
-          if (id == 0) this.projectCarausal1.push(this.individualProjectImage);
-              this.projectCarausal1[id].main_img.image_src = e.target.result;
+        if(subtype == 'image_list'){
+          this.projectCarausal1.image_list[id] = e.target.result;
+        }
+        else if(subtype == 'tags'){
+          if(subtype_2 == 'image_list'){
+            this.projectCarausal1.tags[id].image_list[id_2] = e.target.result;
           }
-        if (subtype == 'tags' && subtype_2 == 'image_list'){
-          this.projectCarausal1[id].main_img.tags[id_2].image_list[id_3] = e.target.result;
+          else if(subtype_2 == 'addImage'){
+            this.projectCarausal1.tags[id].image_list.push(e.target.result);
+          }
         }
         console.log(this.projectCarausal1);
      };
@@ -381,9 +391,21 @@ export class AdminComponent  {
     this.projectCarausal1.splice(index,1);
     this.toastr.success('Projects Display Deleted Successfully');
   }
-  addTag(){
-    for(let index = 0; index < this.numberOfTags; index++){
-      if (index !=0) this.individualProjectImage.main_img.tags.push(index);
-    }
+  
+  deleteTagImage(tagIndex=0,index=0){
+    console.log(index);
+    console.log(tagIndex);
+    this.projectCarausal1.tags[tagIndex].image_list.splice(index,1);
+    this.toastr.success('Tag Image Deleted Successfully');
+    console.log(this.projectCarausal1);
   }
+
+  addNewtag(){
+    this.projectCarausal1.tags.push({
+      "tag_name" : "New Tag Name",
+      "image_list" : ["https://picsum.photos/600/400?random=18","https://picsum.photos/600/400?random=20"]        
+    });
+    this.toastr.success('New Tag Added Successfully');
+  }
+
 }
