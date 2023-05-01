@@ -18,7 +18,7 @@
       <div class="parent" style="max-width: 500px;;margin: 0 auto;">
       <ng-container *ngIf="selectedOption === 'intro'">
         <form [formGroup]="introForm">
-          <div class="form-group row">
+          <!-- <div class="form-group row">
             <label for="title" style="margin-right: 125px;"><b>Title</b></label>
             <input class="form-control" type="text" name="title" formControlName="introTitle" name="title">
           </div>
@@ -29,9 +29,9 @@
           <div class="form-group row">
             <label for="introDescription" style="margin-right: 100px;"><b>Description</b></label>
             <textarea class="form-control" class="form-control" formControlName ="introDescription" aria-label="With textarea" style="height: 150px;"></textarea>
-          </div> 
+          </div>  -->
           <div class="form-group row" style="cursor:pointer;">
-            <label for="image"><b>Image</b></label>
+            <label for="image"><b>Intro Image</b></label>
             <img class="preview-image" [src]="introImage ? introImage : currentIntroImage" (click)="selectFileInput.click()">
             <input #selectFileInput type="file" (change)="imagesPreview($event,'intro')" id="file-input" name="file-input" style="display: none;">
           </div>
@@ -41,7 +41,7 @@
       </ng-container>
       <ng-container *ngIf="selectedOption === 'aboutUs'">
         <form [formGroup]="aboutUsForm">
-          <div class="form-group row">
+          <!-- <div class="form-group row">
             <label for="aboutUsTitle" style="margin-right: 125px;"><b>Title</b> </label>
             <input class="form-control" type="text" name="aboutUsTitle" formControlName="aboutUsTitle" >
           </div>
@@ -52,14 +52,26 @@
           <div class="form-group row">
             <label for="aboutUsPara2" style="margin-right: 100px;"><b>Paragraph 2 </b></label>
             <textarea class="form-control" class="form-control" formControlName ="aboutUsPara2" aria-label="With textarea" style="height: 150px;"></textarea>
-          </div> 
+          </div>  -->
           <div class="form-group row" style="cursor:pointer;">
-            <label for="image"><b>Image</b></label>
-            <img class="preview-image" [src]="aboutUsImage ? aboutUsImage : currnetAboutUsImage" (click)="selectFileInput.click()">
-            <input #selectFileInput type="file" (change)="imagesPreview($event,'about_us')" id="file-input" name="file-input" style="display: none;">
+            <label for="image"><b>About Us Header Image</b></label>
+            <img class="preview-image" [src]="aboutUsHeaderImage ? aboutUsHeaderImage : currnetAboutUsImage" (click)="selectFileInput1.click()">
+            <input #selectFileInput1 type="file" (change)="imagesPreview($event,'about_us',0,'header')" id="file-input" name="file-input" style="display: none;">
+          </div>
+          <br><br>
+          <div class="form-group row" style="cursor:pointer;">
+            <label for="image"><b>About US Middle Image</b></label>
+            <img class="preview-image" [src]="aboutUsImage ? aboutUsImage : currnetAboutUsImage" (click)="selectFileInput2.click()">
+            <input #selectFileInput2 type="file" (change)="imagesPreview($event,'about_us',0,'middle')" id="file-input" name="file-input" style="display: none;">
+          </div>
+          <br><br>
+          <div class="form-group row" style="cursor:pointer;">
+            <label for="image"><b>About Us Footer Image</b></label>
+            <img class="preview-image" [src]="aboutUsFooterImage ? aboutUsFooterImage : currnetAboutUsImage" (click)="selectFileInput3.click()">
+            <input #selectFileInput3 type="file" (change)="imagesPreview($event,'about_us',0,'footer')" id="file-input" name="file-input" style="display: none;">
           </div>
         </form>
-        <button type="submit" class="btn btn-success" (click)="updateIntro()" >Update About US</button>
+        <button type="submit" class="btn btn-success" (click)="updateAboutUs()" >Update About US</button>
         <br><br><br>
       </ng-container>
       <ng-container *ngIf="selectedOption =='residential_design'">
@@ -71,6 +83,15 @@
             <img style="margin-bottom: 20px;cursor: pointer;" class="preview-image" [src]="image ? image : null" (click)="selectFileInput.click()">
             <input #selectFileInput type="file" (change)="imagesPreview($event,'project_display',image_index,'image_list')" id="file-input" name="file-input" style="display: none;">
             <br>
+            <button type="submit" class="btn btn-success" (click)="deleteImage(image_index,'image_list')">Delete Image</button>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-success" (click)="addCarausalImage()">Add Carausal Image</button>
+        <div *ngIf="addCarausalImage_toggle">
+          <div class="form-group row">
+            <input  type="file" (change)="imagesPreview($event,'add_carausal_image')" id="file-input" name="file-input" >
+            <br>
+            <button type="submit" class="btn btn-success" (click)="addImage()">Add Image</button>
           </div>
         </div>
         <hr>

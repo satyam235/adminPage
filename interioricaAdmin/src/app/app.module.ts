@@ -6,6 +6,7 @@ import { AdminComponent } from './admin/admin.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     FormsModule,
     ReactiveFormsModule,
     NgSelectModule,
+    HttpClientModule,
     BrowserAnimationsModule, // required animations module
     ToastrModule.forRoot() // ToastrModule added
   ],

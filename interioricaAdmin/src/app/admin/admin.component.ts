@@ -7,6 +7,8 @@ import {
 } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { AdminService } from "../services/admin.service";
+import { from } from 'rxjs';
+import { environment } from "../../environment/environment";
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
@@ -14,6 +16,10 @@ import { AdminService } from "../services/admin.service";
 })
 export class AdminComponent  {
   @ViewChild('selectFileInput') selectFileInput!: ElementRef;
+  @ViewChild('selectFileInput1') selectFileInput1!: ElementRef;
+  @ViewChild('selectFileInput2') selectFileInput2!: ElementRef;
+  @ViewChild('selectFileInput3') selectFileInput3!: ElementRef;
+
 
   // Introduction
   currentIntroImage = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR11dbvjijhPrRPlnz-gmIREmQi67ShE2lD7_KcjB-IrQ&s';
@@ -26,6 +32,7 @@ export class AdminComponent  {
     introSubtitle: this.introSubtitle,
     introDescription: this.introDescription
   });
+  file :any;
   // ProjectsCarousel
 
   numberOfTags = 0;
@@ -59,6 +66,9 @@ export class AdminComponent  {
   });
   currnetAboutUsImage = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR11dbvjijhPrRPlnz-gmIREmQi67ShE2lD7_KcjB-IrQ&s';
   aboutUsImage :any;
+  aboutUsHeaderImage :any;
+  aboutUsFooterImage :any;
+
 
   // Projects
   projectTitle = new FormControl('',[]);
@@ -87,6 +97,7 @@ export class AdminComponent  {
   });
   reviewBackgroundImage = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR11dbvjijhPrRPlnz-gmIREmQi67ShE2lD7_KcjB-IrQ&s';
   updatedReviewBackgroundImage :any;
+  tempImage :any;
 
   // Reviews
   reviewList = [
@@ -139,7 +150,6 @@ export class AdminComponent  {
     this.setReviewData();
     this.setUpcommingProjectsData();
     this.setContactUsData();
-    this.fetchResidentialDesignData();
     this.fetchCommercialDesignData();
   }
   
@@ -153,20 +163,43 @@ export class AdminComponent  {
   aboutUsData = this.introData;
   projectsData= this.introData;
   reviewData = this.introData;
-  
+  addCarausalImage_toggle = false;
 
 
   // Function to set intro data
   fetchIntroData() {
-    this.introForm.controls.introTitle.setValue(this.introData.title);
-    this.introForm.controls.introSubtitle.setValue(this.introData.subtitle);
-    this.introForm.controls.introDescription.setValue(this.introData.description);
+    // this.introForm.controls.introTitle.setValue(this.introData.title);
+    // this.introForm.controls.introSubtitle.setValue(this.introData.subtitle);
+    // this.introForm.controls.introDescription.setValue(this.introData.description);
+    var params ={
+      "documentName" : "intro"
+    }
+    this.fetchData(params).then((res)=>{
+      res = JSON.parse(res);
+      this.currentIntroImage = res['introImage'];
+    }
+    ).catch((err)=>{
+      this.toastr.error('Error while fetching data');
+    })
   }
 
   fetchAboutUsData() {
-    this.aboutUsForm.controls.aboutUsTitle.setValue(this.aboutUsData.title);
-    this.aboutUsForm.controls.aboutUsPara1.setValue(this.aboutUsData.subtitle);
-    this.aboutUsForm.controls.aboutUsPara2.setValue(this.aboutUsData.description);
+    // this.aboutUsForm.controls.aboutUsTitle.setValue(this.aboutUsData.title);
+    // this.aboutUsForm.controls.aboutUsPara1.setValue(this.aboutUsData.subtitle);
+    // this.aboutUsForm.controls.aboutUsPara2.setValue(this.aboutUsData.description);
+    var params ={
+      "documentName" : "aboutUs",
+    }
+    this.fetchData(params).then((res)=>{
+      res = JSON.parse(res);
+      this.aboutUsHeaderImage = res['aboutUsHeader'];
+      this.aboutUsImage = res['aboutUsMiddle'];
+      this.aboutUsFooterImage = res['aboutUsFooter'];
+    }
+    ).catch((err)=>{
+      this.toastr.error('Error while fetching data');
+    }
+    )
   }
 
   fetchResidentialDesignData() {
@@ -183,8 +216,32 @@ export class AdminComponent  {
         "image_list" : ["https://picsum.photos/600/400?random=5","https://picsum.photos/600/400?random=6"]
       }]
     }
-    this.projectCarausal1 = data;
-    console.log(this.projectCarausal1);
+
+    var params = {
+      "documentName" : "residential-design"
+    }
+    this.fetchData(params).then((res)=>{
+      res = JSON.parse(res);
+      data["image_list"] = res["designImages"]
+      // loop through response and check if key is not designImages then create a new tag and push it to tags array
+      var tags = [];
+      for(var key in res) {
+        if(key != "designImages") {
+          var tag = {
+            "tag_name" : key,
+            "image_list" : res[key]
+          }
+          tags.push(tag);
+        }
+      }
+      data["tags"] = tags;
+      this.projectCarausal1 = data;
+      this.toastr.success('Residential Designs fetched successfully');
+    }
+    ).catch((err)=>{
+      this.toastr.error('Error while fetching data');
+    }
+    )
   }
 
   fetchCommercialDesignData()  {
@@ -230,15 +287,34 @@ export class AdminComponent  {
 
   // Function to show form based on selected option
   showForm(option: string) {
+    if (option == "residential_design"){
+      this.fetchResidentialDesignData();
+    }
     this.selectedOption = option;
   }
 
   imagesPreview(event:any,type:string,id=1,subtype='',subtype_2 ='',id_2=0,id_3=0) {
-    const file = event.target.files[0]; 
-    const reader = new FileReader();
+    const file = event.target.files[0];
+    const reader = new FileReader();  
+
     reader.onload = (e: any) => {
+
       if (type == 'intro') this.introImage = e.target.result;
-      else if (type == 'about_us') this.aboutUsImage = e.target.result;
+      else if (type == 'about_us'){
+        console.log(subtype);
+        if (subtype == 'header') {
+          this.aboutUsHeaderImage = e.target.result;
+          this.selectFileInput1.nativeElement.value = '';
+        }
+        else if (subtype == 'middle') {
+          this.aboutUsImage = e.target.result;
+          this.selectFileInput2.nativeElement.value = '';
+        }
+        else if (subtype == 'footer'){
+           this.aboutUsFooterImage = e.target.result;
+           this.selectFileInput3.nativeElement.value = '';
+        }
+      }
       else if (type == 'real_life_reviews') this.updatedReviewBackgroundImage = e.target.result;
       else if  (type == 'reviews'){ 
         this.reviewList[id].client_image = e.target.result;
@@ -265,31 +341,71 @@ export class AdminComponent  {
             this.projectCarausal1.tags[id].image_list.push(e.target.result);
           }
         }
-     };
+     }else if (type == 'add_carausal_image'){
+      this.tempImage = e.target.result;
+     }
+
     }
     reader.readAsDataURL(file);
-    this.selectFileInput.nativeElement.value = null; 
+    if (type != 'about_us') this.selectFileInput.nativeElement.value = null; 
   
 }
   // Function to update Intro data
-  updateIntro() {
+  async updateIntro() {
     // Update introData object with new data
-    console.log(this.introForm.value.introTitle);
-    console.log(this.introForm.value.introSubtitle);
-    console.log(this.introForm.value.introDescription);
-    console.log(this.introImage);
-    // API call to update introData
-    this.toastr.success('Updated intro successfully');
+
+    this.createFileFromUrl(this.introImage)
+    .then((file: File) => {
+      this.file = file;
+    })
+    .catch((err: Error) => {
+      // Handle any errors that occur during the fetch or file creation
+    });
+
+    var file = await this.createFileFromUrl(this.introImage);
+    const formData = new FormData();
+    formData.append('introImage', file);
+    formData.append('documentName', "intro");
+    var params = {
+      endpoint:"admin/intro",
+      formData:formData
+    }
+    this.uploadFile(params).then((res:any)=>{
+      // if response if 200 then taostr success
+      if (res.status == 200){
+        this.toastr.success('Updated intro successfully');
+      }
+    }).catch((err:any)=>{
+      // if response is 400 then taostr error
+      this.toastr.error('Error while updating intro');
+    })
   }
 
   // Function to update About Us data
-  updateAboutUs(data: any) {
-    console.log(this.aboutUsForm.value.aboutUsTitle);
-    console.log(this.aboutUsForm.value.aboutUsPara1);
-    console.log(this.aboutUsForm.value.aboutUsPara2);
-    console.log(this.aboutUsImage);
-    this.toastr.success('Updated about us successfully');
-  }
+  async updateAboutUs() {
+    // Update aboutUsData object with new data
+    var header = await this.createFileFromUrl(this.aboutUsHeaderImage);
+    var middle = await this.createFileFromUrl(this.aboutUsImage);
+    var footer = await this.createFileFromUrl(this.aboutUsFooterImage);
+    const formData = new FormData();
+    formData.append('aboutUsHeader', header);
+    formData.append('aboutUsMiddle', middle);
+    formData.append('aboutUsFooter', footer);
+    formData.append('documentName', "aboutUs");
+    var params = {
+      endpoint:"admin/aboutus",
+      formData:formData
+    }
+    this.uploadFile(params).then((res:any)=>{
+      // if response if 200 then taostr success
+      if (res.status == 200){
+        this.toastr.success('Updated about us successfully');
+      }
+    }).catch((err:any)=>{
+      // if response is 400 then taostr error
+      this.toastr.error('Error while updating about us');
+    })
+ }
 
   // Function to update Projects data
   updateProjects() {
@@ -345,7 +461,19 @@ export class AdminComponent  {
     this.toastr.success('Contact Us Updated Successfully');
   }
 
-  updateProjectsDisplay(type:string) {
+ async updateProjectsDisplay(type:string) {
+    var image_list = [];
+    for (let i= 0; i<this.projectCarausal1.image_list.length; i++){
+      var file = await this.createFileFromUrl(this.projectCarausal1.image_list[i]);
+      image_list.push(file);
+    }
+    this.projectCarausal1.image_list = image_list;
+    for (let i= 0; i<this.projectCarausal1.tags.length; i++){
+      for (let j= 0; j<this.projectCarausal1.tags[i].image_list.length; j++){
+        var file = await this.createFileFromUrl(this.projectCarausal1.tags[i].image_list[j]);
+        this.projectCarausal1.tags[i].image_list[j] = file;
+      }
+    }
     if(type == 'commercial_design'){
       console.log("commercial_design");
       console.log(this.projectCarausal1);
@@ -353,8 +481,34 @@ export class AdminComponent  {
     }
     else if(type == 'residential_design'){
       console.log("residential_design");
-      console.log(this.projectCarausal1);
-      this.toastr.success('Residential Design Section Updated Successfully');
+      const formData = new FormData();
+      for (let i= 0; i<this.projectCarausal1.image_list.length; i++){
+        formData.append('designImages', this.projectCarausal1.image_list[i]);
+      }
+      for (let i= 0; i<this.projectCarausal1.tags.length; i++){
+        for (let j= 0; j<this.projectCarausal1.tags[i].image_list.length; j++){
+          formData.append(this.projectCarausal1.tags[i].tag_name, this.projectCarausal1.tags[i].image_list[j]);
+        }
+      }
+      formData.append('documentName', "residential-design");
+      var params = {
+        endpoint:"admin/residential-design",
+        formData:formData
+      }
+      this.uploadFile(params).then((res:any)=>{
+        // if response if 200 then taostr success
+        if (res.status == 200){
+          this.toastr.success('Updated residential design successfully');
+          this.fetchResidentialDesignData();
+        }
+      }).catch((err:any)=>{
+        // if response is 400 then taostr error
+        console.log(err);
+        this.toastr.error('Error while updating residential design');
+      })
+    
+
+      
     }
   }
 
@@ -383,6 +537,71 @@ export class AdminComponent  {
       "image_list" : ["https://picsum.photos/600/400?random=18","https://picsum.photos/600/400?random=20"]        
     });
     this.toastr.success('New Tag Added Successfully');
+  }
+
+  uploadFile(params: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            resolve(xhr.response);
+          } else {
+            reject(xhr.response);
+          }
+        }
+      };
+
+      xhr.open('POST', 'https://interiorica-backend.onrender.com/'+params.endpoint, true);
+      xhr.send(params.formData);
+    });
+  }
+
+  fetchData(params: any): Promise<any> {
+    const queryString = Object.keys(params)
+      .map(key => key + '=' + encodeURIComponent(params[key]))
+      .join('&');
+  
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            resolve(xhr.response);
+          } else {
+            reject(xhr.response);
+          }
+        }
+      };
+  
+      xhr.open('GET', `${environment.fetchData}?${queryString}`, true);
+      xhr.send();
+    });
+  }
+  
+
+  async createFileFromUrl(url: string): Promise<File> {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const file = new File([blob], "File name", { type: "image/png" });
+      return file;
+    } catch (error) {
+      throw new Error(`Failed to create file from URL: ${error}`);
+    }
+  }
+
+  addCarausalImage(){
+    console.log(this.addCarausalImage_toggle);
+    this.addCarausalImage_toggle = !this.addCarausalImage_toggle;
+  }
+
+  addImage(){
+    this.projectCarausal1.image_list.push(this.tempImage);
+    this.tempImage = null;
+    this.addCarausalImage_toggle = false;
+    this.toastr.success('Image Added Successfully');
+
   }
 
 }
