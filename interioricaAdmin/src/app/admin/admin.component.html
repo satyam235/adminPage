@@ -81,9 +81,9 @@
         <div *ngFor="let image of projectCarausal1.image_list;let image_index = index">
           <div class="form-group row">
             <img style="margin-bottom: 20px;cursor: pointer;" class="preview-image" [src]="image ? image : null" (click)="selectFileInput.click()">
-            <input #selectFileInput type="file" (change)="imagesPreview($event,'project_display',image_index,'image_list')" id="file-input" name="file-input" style="display: none;">
+            <input #selectFileInput type="file" (change)="imagesPreview($event,'project_display',image_index,'image_list','change_image')" id="file-input" name="file-input" style="display: none;">
             <br>
-            <button type="submit" class="btn btn-success" (click)="deleteImage(image_index,'image_list')">Delete Image</button>
+            <button type="submit" class="btn btn-danger" (click)="deleteCarausalImage(image_index)" >Delete Image</button>
           </div>
         </div>
         <button type="submit" class="btn btn-success" (click)="addCarausalImage()">Add Carausal Image</button>
@@ -139,6 +139,7 @@
             <img style="margin-bottom: 20px;cursor: pointer;" class="preview-image" [src]="image ? image : null" (click)="selectFileInput.click()">
             <input #selectFileInput type="file" (change)="imagesPreview($event,'project_display',image_index,'image_list')" id="file-input" name="file-input" style="display: none;">
             <br>
+            <button type="submit" class="btn btn-danger" (click)="deleteCarausalImage(image_index)" >Delete Image</button>
           </div>
         </div>
         <hr>
@@ -178,25 +179,19 @@
         <br><br><br>
       </ng-container>
       <ng-container *ngIf="selectedOption === 'projects'">
-        <form [formGroup]="projectForm">
+        <div *ngFor="let item of youtubecards;let i=index">
+          <hr>
+          <b style="color:brown">Card {{i+1}}</b>
+          <hr>
           <div class="form-group row">
-            <label for="aboutUsTitle" style="margin-right: 125px;"><b>Title</b></label>
-            <input class="form-control" type="text" name="aboutUsTitle" formControlName="projectTitle" >
+            <label for="title" style="margin-right: 125px;"><b>Title</b></label>
+            <input class="form-control" type="text" [(ngModel)]="item.title" name="title">
+            <label for="title" style="margin-right: 125px;"><b>Youtube Link</b></label>
+            <input class="form-control" type="text" [(ngModel)]="item.url" name="title">
+            <label>Description</label>
+            <textarea class="form-control" [(ngModel)]="item.description" rows="3"></textarea>
           </div>
-          <div class="form-group row">
-            <label for="aboutUsPara1" style="margin-right: 100px;"><b>Subtitle</b></label>
-            <input class="form-control"  type="text" formControlName="projectSubtitle" name="projectSubtitle">
-          </div>
-          <div class="form-group row">
-            <label for="aboutUsPara2" style="margin-right: 100px;"><b>Description</b></label>
-            <textarea class="form-control" class="form-control" formControlName ="projectDescription" aria-label="With textarea" style="height: 150px;"></textarea>
-          </div> 
-          <div class="form-group row">
-            <label for="aboutUsPara2" style="margin-right: 100px;"><b>Project Link</b></label>
-            <ng-select  [items]="projectUrlList" name="updatedProjectUrlList" placeholder="Select Project Link" [searchable]="true" [multiple]=true
-            [closeOnSelect]="false" [clearSearchOnAdd]="true"  addTagText="Add New link" [addTag]="true" [(ngModel)]="updatedProjectUrlList" [ngModelOptions]="{standalone: true}"></ng-select>
-          </div>
-        </form>
+        </div>
         <button type="submit" class="btn btn-success" (click)="updateProjects()">Update Projects data</button>
         <br>
         <br>

@@ -85,6 +85,25 @@ export class AdminComponent  {
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR11dbvjijhPrRPlnz-gmIREmQi67ShE2lD7_KcjB-IrQ&s',
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR11dbvjijhPrRPlnz-gmIREmQi67ShE2lD7_KcjB-IrQ&s',
   ];
+
+  youtubecards = [
+    {
+      "title":"Project 1",
+      "description":"This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",
+      "url":"https://www.youtube.com/embed/1y_kfWUCFDQ"
+    },{
+      "title":"Project 2",
+      "description":"This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",
+      "url":"https://www.youtube.com/embed/1y_kfWUCFDQ"
+
+    },{
+      "title":"Project 3",
+      "description":"This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",
+      "url":"https://www.youtube.com/embed/1y_kfWUCFDQ"
+    }
+  ]
+
+
   selectedReviewOption = "";
   // Real Life Reviews
   reviewTitle = new FormControl('',[]);
@@ -146,7 +165,6 @@ export class AdminComponent  {
   constructor(private _formBuilder: FormBuilder,private toastr: ToastrService,private adminService: AdminService,) {
     this.fetchIntroData();
     this.fetchAboutUsData();
-    this.setProjectsData();
     this.setReviewData();
     this.setUpcommingProjectsData();
     this.setContactUsData();
@@ -258,16 +276,49 @@ export class AdminComponent  {
         "image_list" : ["https://picsum.photos/600/400?random=5","https://picsum.photos/600/400?random=6"]
       }]
     }
-    this.projectCarausal1 = data;
-    console.log(this.projectCarausal1);
+
+    var params = {
+      "documentName" : "commercialDesign"
+    }
+    this.fetchData(params).then((res)=>{
+      res = JSON.parse(res);
+      data["image_list"] = res["designImages"]
+      // loop through response and check if key is not designImages then create a new tag and push it to tags array
+      var tags = [];
+      for(var key in res) {
+        if(key != "designImages") {
+          var tag = {
+            "tag_name" : key,
+            "image_list" : res[key]
+          }
+          tags.push(tag);
+        }
+      }
+      data["tags"] = tags;
+      this.projectCarausal1 = data;
+      this.toastr.success('Commercial Designs fetched successfully');
+    }
+    ).catch((err)=>{
+      this.toastr.error('Error while fetching data');
+    }
+    )
   }
 
-  setProjectsData() {
-    this.projectForm.controls.projectTitle.setValue(this.projectsData.title);
-    this.projectForm.controls.projectSubtitle.setValue(this.projectsData.subtitle);
-    this.projectForm.controls.projectDescription.setValue(this.projectsData.description);
+  fetchProjectsData() {
+    // this.projectForm.controls.projectTitle.setValue(this.projectsData.title);
+    // this.projectForm.controls.projectSubtitle.setValue(this.projectsData.subtitle);
+    // this.projectForm.controls.projectDescription.setValue(this.projectsData.description);
+    var params = {
+      "documentName" : "youtubeCards"
+    }
+    this.fetchData(params).then((res)=>{
+      res = JSON.parse(res);
+      this.toastr.success('Projects fetched successfully');
+    }
+    ).catch((err)=>{
+      this.toastr.error('Error while fetching data');
+    })
   }
-
   setReviewData() {
     this.reviewForm.controls.reviewTitle.setValue(this.reviewData.title);
     this.reviewForm.controls.reviewSubtitle.setValue(this.reviewData.subtitle);
@@ -294,6 +345,7 @@ export class AdminComponent  {
   }
 
   imagesPreview(event:any,type:string,id=1,subtype='',subtype_2 ='',id_2=0,id_3=0) {
+    
     const file = event.target.files[0];
     const reader = new FileReader();  
 
@@ -330,8 +382,11 @@ export class AdminComponent  {
         }
       }
       else if(type == 'project_display'){
-        if(subtype == 'image_list'){
+        if(subtype == 'image_list' && subtype_2 == 'change_image'){
           this.projectCarausal1.image_list[id] = e.target.result;
+        }
+        else if(subtype == 'image_list' && subtype_2 == 'delete_image'){
+          this.projectCarausal1.image_list.splice(id,1);
         }
         else if(subtype == 'tags'){
           if(subtype_2 == 'image_list'){
@@ -349,7 +404,7 @@ export class AdminComponent  {
     reader.readAsDataURL(file);
     if (type != 'about_us') this.selectFileInput.nativeElement.value = null; 
   
-}
+  }
   // Function to update Intro data
   async updateIntro() {
     // Update introData object with new data
@@ -409,10 +464,7 @@ export class AdminComponent  {
 
   // Function to update Projects data
   updateProjects() {
-    console.log(this.projectForm.value.projectTitle);
-    console.log(this.projectForm.value.projectSubtitle);
-    console.log(this.projectForm.value.projectDescription);
-    console.log(this.updatedProjectUrlList);
+    console.log(this.youtubecards);
     this.toastr.success('Updated projects successfully');
   }
 
@@ -475,12 +527,34 @@ export class AdminComponent  {
       }
     }
     if(type == 'commercial_design'){
-      console.log("commercial_design");
-      console.log(this.projectCarausal1);
+      const formData = new FormData();
+      for (let i= 0; i<this.projectCarausal1.image_list.length; i++){
+        formData.append('designImages', this.projectCarausal1.image_list[i]);
+      }
+      for (let i= 0; i<this.projectCarausal1.tags.length; i++){
+        for (let j= 0; j<this.projectCarausal1.tags[i].image_list.length; j++){
+          formData.append(this.projectCarausal1.tags[i].tag_name, this.projectCarausal1.tags[i].image_list[j]);
+        }
+      }
+      formData.append('documentName', "commercialDesign");
+      var params = {
+        endpoint:"admin/commercial-design",
+        formData:formData
+      }
+      this.uploadFile(params).then((res:any)=>{
+        // if response if 200 then taostr success
+        if (res.status == 200){
+          this.toastr.success('Updated residential design successfully');
+          this.fetchResidentialDesignData();
+        }
+      }).catch((err:any)=>{
+        // if response is 400 then taostr error
+        console.log(err);
+        this.toastr.error('Error while updating residential design');
+      })
       this.toastr.success('Commercial Design Section Updated Successfully');
     }
     else if(type == 'residential_design'){
-      console.log("residential_design");
       const formData = new FormData();
       for (let i= 0; i<this.projectCarausal1.image_list.length; i++){
         formData.append('designImages', this.projectCarausal1.image_list[i]);
@@ -506,8 +580,6 @@ export class AdminComponent  {
         console.log(err);
         this.toastr.error('Error while updating residential design');
       })
-    
-
       
     }
   }
@@ -579,7 +651,6 @@ export class AdminComponent  {
     });
   }
   
-
   async createFileFromUrl(url: string): Promise<File> {
     try {
       const response = await fetch(url);
@@ -602,6 +673,11 @@ export class AdminComponent  {
     this.addCarausalImage_toggle = false;
     this.toastr.success('Image Added Successfully');
 
+  }
+
+  deleteCarausalImage(index=0){
+    this.projectCarausal1.image_list.splice(index,1);
+    this.toastr.success('Image Deleted Successfully');
   }
 
 }
