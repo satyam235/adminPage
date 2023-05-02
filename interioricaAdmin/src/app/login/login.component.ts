@@ -16,9 +16,6 @@ export class LoginComponent {
   constructor() { }
 
   login() {
-    console.log("login");
-    console.log(this.email);
-    console.log(this.password);
     if (this.email == environment.login_credentials.username && this.password == environment.login_credentials.password) {
       console.log("login success");
       localStorage.setItem('access_token', environment.login_credentials.access_token);

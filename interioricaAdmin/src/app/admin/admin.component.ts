@@ -10,6 +10,7 @@ import { AdminService } from "../services/admin.service";
 import { from } from 'rxjs';
 import { environment } from "../../environment/environment";
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin',
@@ -177,7 +178,7 @@ export class AdminComponent  {
     "projectTwoDate":"Date 2"
   }
 
-  constructor(private _formBuilder: FormBuilder,private toastr: ToastrService,private adminService: AdminService,private http: HttpClient) {
+  constructor(private _formBuilder: FormBuilder,private toastr: ToastrService,private adminService: AdminService,private http: HttpClient,private router: Router) { 
     this.fetchIntroData();
     this.fetchAboutUsData();
   }
@@ -1023,5 +1024,10 @@ export class AdminComponent  {
       xhr.open('PUT', 'https://interiorica-backend.onrender.com/'+params.endpoint, true);
       xhr.send(params.formData);
     });
+  }
+
+  logout(){
+    localStorage.clear();
+    this.router.navigate(['login']);
   }
 }
