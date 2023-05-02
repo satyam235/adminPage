@@ -106,7 +106,7 @@ export class AdminComponent  {
   ]
 
 
-  selectedReviewOption = "";
+  selectedReviewOption = "updateReviews";
   // Real Life Reviews
   reviewTitle = new FormControl('',[]);
   reviewSubtitle = new FormControl('',[]);
@@ -121,31 +121,34 @@ export class AdminComponent  {
   tempImage :any;
 
   // Reviews
-  reviewList = [
-    {
-      "id":0,
-      "client_name" : "John Doe",
-      "review" : "Hey there, I am using this template right now to build my website. I must say the customer support is excellent. Keep up the good work guys!",
-      "client_image" : "https://picsum.photos/600/400?random=1"
-    },
-    {
-      "id":1,
-      "client_name" : "John Doe",
-      "review" : "Hey there, I must say the customer support is excellent. Keep up the good work guys!",
-      "client_image" : "https://picsum.photos/600/400?random=2"
-    },
-    {
-      "id":2,
-      "client_name" : "John Doe",
-      "review" : "Hey there, I am using this template right now to build my website !!",
-      "client_image" : "https://picsum.photos/600/400?random=3"
-    }
-  ]
+  //reviewList = [
+  //   {
+  //     "id":0,
+  //     "client_name" : "John Doe",
+  //     "review" : "Hey there, I am using this template right now to build my website. I must say the customer support is excellent. Keep up the good work guys!",
+  //     "client_image" : "https://picsum.photos/600/400?random=1"
+  //   },
+  //   {
+  //     "id":1,
+  //     "client_name" : "John Doe",
+  //     "review" : "Hey there, I must say the customer support is excellent. Keep up the good work guys!",
+  //     "client_image" : "https://picsum.photos/600/400?random=2"
+  //   },
+  //   {
+  //     "id":2,
+  //     "client_name" : "John Doe",
+  //     "review" : "Hey there, I am using this template right now to build my website !!",
+  //     "client_image" : "https://picsum.photos/600/400?random=3"
+  //   }
+  // ]
+  reviewList :any;
+
   newReview = {
     "id":0,
     "client_name" : "",
     "review" : "",
-    "client_image" : ""
+    "client_image" : "",
+    "projectName" : ""
   }
 
   // Upcomming Projects
@@ -177,7 +180,6 @@ export class AdminComponent  {
   constructor(private _formBuilder: FormBuilder,private toastr: ToastrService,private adminService: AdminService,private http: HttpClient) {
     this.fetchIntroData();
     this.fetchAboutUsData();
-    this.setReviewData();
   }
   
   selectedOption: string = 'intro';
@@ -339,10 +341,53 @@ export class AdminComponent  {
     })
   }
 
-  setReviewData() {
-    this.reviewForm.controls.reviewTitle.setValue(this.reviewData.title);
-    this.reviewForm.controls.reviewSubtitle.setValue(this.reviewData.subtitle);
-    this.reviewForm.controls.reviewDescription.setValue(this.reviewData.description);
+  fetchReviewData() {
+    var params = {
+      "collectionName" : "userReviews"
+    }
+    this.fetchData(params).then((res)=>{
+      res = JSON.parse(res);
+      console.log(res);
+      this.reviewList = [];
+      for(var i = 0; i < res.length; i++) {
+        var data = {
+        "id":i,
+        "client_name":res[i]["clientName"],
+        "client_image":res[i]["clientImage"],
+        "review":res[i]["clientFeedback"],
+        "projectName":res[i]["projectName"],
+        "uniqueId":res[i]["id"],
+        }
+        this.reviewList.push(data);
+      }
+      console.log(this.reviewList);
+      this.toastr.success('Reviews fetched successfully');
+    }
+    ).catch((err)=>{
+      this.toastr.error('Error while fetching data');
+    }
+    )
+  }
+  
+  fetchRealLifeReview(){
+    // this.reviewForm.controls.reviewTitle.setValue(this.reviewData.title);
+    // this.reviewForm.controls.reviewSubtitle.setValue(this.reviewData.subtitle);
+    // this.reviewForm.controls.reviewDescription.setValue(this.reviewData.description);
+    var params = {
+      "documentName" : "realLifeReview"
+    }
+    this.fetchData(params).then((res)=>{
+      res = JSON.parse(res);
+      console.log(res);
+      this.reviewForm.controls.reviewTitle.setValue(res['title']);
+      this.reviewForm.controls.reviewSubtitle.setValue(res['subtitle']);
+      this.reviewForm.controls.reviewDescription.setValue(res['description']);
+      this.updatedReviewBackgroundImage = res['reviewImage'];
+      this.toastr.success('Real Life Reviews fetched successfully');
+    }).catch((err)=>{
+      this.toastr.error('Error while fetching data');
+    }
+    )
   }
 
   fetchtUpcommingProjectsData() {
@@ -413,6 +458,12 @@ export class AdminComponent  {
     }
     if (option == "contact_us"){
       this.fetchContactUsData();
+    }
+    if(option == "reviews"){
+      this.fetchReviewData();
+    }
+    if (option == "real_life_reviews"){
+      this.fetchRealLifeReview();
     }
     this.selectedOption = option;
   }
@@ -570,37 +621,109 @@ export class AdminComponent  {
     
   }
 
-  updateRealLifeReviews() {
-    console.log(this.reviewForm.value.reviewTitle);
-    console.log(this.reviewForm.value.reviewSubtitle);
-    console.log(this.reviewForm.value.reviewDescription);
-    console.log(this.updatedReviewBackgroundImage);
-    this.toastr.success('Updated real life reviews successfully');
+  async updateRealLifeReviews() {
+
+    const formData = new FormData();
+    formData.append('title', String(this.reviewForm.value.reviewTitle));
+    formData.append('subtitle', String(this.reviewForm.value.reviewSubtitle));
+    formData.append('description', String(this.reviewForm.value.reviewDescription));
+    formData.append('reviewImage', await this.createFileFromUrl(this.updatedReviewBackgroundImage) );
+    formData.append('documentName', "realLifeReview");
+    var params = {
+      endpoint:"admin/real-life-review",
+      formData:formData
+    }
+    this.uploadFile(params).then((res:any)=>{
+      // if response if 200 then taostr success
+      res = JSON.parse(res);
+      if (res.message == "Record Added."){
+        this.toastr.success('Updated real life reviews successfully');
+        this.fetchRealLifeReview();
+      }
+      }).catch((err:any)=>{
+        // if response is 400 then taostr error
+        this.toastr.error('Error while updating real life reviews');
+      })
   }
 
-  updateReviews() {
-    console.log(this.reviewList);
-    // api call to update an exising review
-    this.toastr.success('Review Updated Successfully');
+  async updateReviews(id: number) {
+    var index = this.reviewList.findIndex((x:any) => x.id == id);
+    const formData = new FormData();
+    formData.append('collectionName', "userReviews");
+    formData.append('documentName', this.reviewList[index]["uniqueId"]);
+    formData.append('clientName', this.reviewList[index]["client_name"]);
+    formData.append('projectName', this.reviewList[index]["projectName"]);
+    formData.append('clientFeedback', this.reviewList[index]["review"]);
+    formData.append('clientImage',await this.createFileFromUrl(this.reviewList[index]["client_image"]));
+    var params = {
+      endpoint:"admin/user-review",
+      formData:formData
+    }
+    this.updateFile(params).then((res:any)=>{
+      // if response if 200 then taostr success
+      res = JSON.parse(res);
+      if (res.message == 'Record Updated.'){
+        this.fetchReviewData();
+        this.toastr.success('Review Updated Successfully');
+      }
+      }).catch((err:any)=>{
+        // if response is 400 then taostr error
+        this.toastr.error('Error while updating review');
+      });
   }
 
   deleteReview(id: number) {
-    var index = this.reviewList.findIndex(x => x.id == id);
-    this.reviewList.splice(index,1);
-    // api call to delete a review
-    this.toastr.success('Review deleted Successfully');
+    var index = this.reviewList.findIndex((x:any) => x.id == id);
+    const formData = new FormData();
+    formData.append('collectionName', "userReviews");
+    formData.append('documentName', this.reviewList[index]["uniqueId"]);
+    var params = {
+      endpoint:"admin/user-review",
+      formData:formData
+    }
+    this.deleteFile(params).then((res:any)=>{
+      // if response if 200 then taostr success
+      res = JSON.parse(res);
+      if (res.message == 'Record Deleted.'){
+        this.toastr.success('Review deleted successfully');
+        this.fetchReviewData();
+      }
+    }).catch((err:any)=>{
+      // if response is 400 then taostr error
+      this.toastr.error('Error while deleting review');
+    });
   }
 
   switchReviewTab(type = 'addReview'){
     this.selectedReviewOption = type;
   }
 
-  addReview() {
+  async addReview() {
     var index = this.reviewList.length + 1;
     this.newReview.id = index;
     this.reviewList.push(this.newReview);
-    // APi call to add a review
-    this.toastr.success('Review Added Successfully');
+    const formData = new FormData();
+    formData.append('collectionName', "userReviews");
+    formData.append('clientName', this.newReview.client_name);
+    formData.append('projectName', this.newReview.projectName);
+    formData.append('clientFeedback', this.newReview.review);
+    formData.append('clientImage', await this.createFileFromUrl(this.newReview.client_image));
+    var params = {
+      endpoint:"admin/user-review",
+      formData:formData
+    }
+    this.uploadFile(params).then((res:any)=>{
+      // if response if 200 then taostr success
+      res = JSON.parse(res);
+      if (res.message == "Record Added."){
+        this.toastr.success('Added review successfully');
+        this.switchReviewTab('updateReviews');
+      }
+    }).catch((err:any)=>{
+      // if response is 400 then taostr error
+      this.toastr.error('Error while adding review');
+    })
+    
   }
 
   async updateUpcommingProjects() {
@@ -866,4 +989,39 @@ export class AdminComponent  {
     })
   }
 
+  deleteFile(params: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            resolve(xhr.response);
+          } else {
+            reject(xhr.response);
+          }
+        }
+      };
+
+      xhr.open('DELETE', 'https://interiorica-backend.onrender.com/'+params.endpoint, true);
+      xhr.send(params.formData);
+    });
+  }
+
+  updateFile(params: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            resolve(xhr.response);
+          } else {
+            reject(xhr.response);
+          }
+        }
+      };
+
+      xhr.open('PUT', 'https://interiorica-backend.onrender.com/'+params.endpoint, true);
+      xhr.send(params.formData);
+    });
+  }
 }

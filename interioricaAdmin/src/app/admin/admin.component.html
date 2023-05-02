@@ -227,14 +227,18 @@
         <button type="submit" class="btn btn-primary mr-2" (click)="switchReviewTab('addReview')" >Add Review</button>
         <button type="submit" class="btn btn-primary mr-2" (click)="switchReviewTab('updateReviews')" >Update Reviews</button>
         <div *ngIf="selectedReviewOption == 'updateReviews'">
-          <div *ngFor="let review of reviewList">
+          <div *ngFor="let review of reviewList;let i=index;">
             <hr>
             <div class="form-group row">
               <label for="reviewTitle" style="margin-right: 125px;"><b>Name</b></label>
               <input class="form-control" type="text" name="reviewTitle"  [(ngModel)]="review.client_name">
             </div>
             <div class="form-group row">
-              <label for="reviewDescription" style="margin-right: 100px;"><b>Description</b></label>
+              <label for="reviewTitle" style="margin-right: 125px;"><b>Project</b></label>
+              <input class="form-control" type="text" name="reviewTitle"  [(ngModel)]="review.projectName">
+            </div>
+            <div class="form-group row">
+              <label for="reviewDescription" style="margin-right: 100px;"><b>review</b></label>
               <textarea  aria-label="With textarea" style="height: 150px;" [(ngModel)]="review.review"></textarea>
             </div> 
             <div class="form-group row" style="cursor:pointer;">
@@ -243,7 +247,7 @@
               <input #selectFileInput type="file" (change)="imagesPreview($event,'reviews',review.id)" id="file-input" name="file-input" style="display: none;">
             </div>
             <div class="form-group row">
-              <button type="submit" style="margin-bottom: 20px;" class="btn btn-success mr-3" (click)="updateReviews()" >Update review</button>
+              <button type="submit" style="margin-bottom: 20px;" class="btn btn-success mr-3" (click)="updateReviews(i)" >Update review</button>
               <button type="submit" class="btn btn-danger" (click)="deleteReview(review.id)">Delete review</button>
             </div>
           </div>
@@ -253,6 +257,10 @@
           <div class="form-group row">
             <label for="title" style="margin-right: 125px;"><b>Reviewer Name</b></label>
             <input class="form-control" style="width: 96%;margin: 2%;" type="text" name="title" [(ngModel)]="newReview.client_name" name="title">
+          </div>
+          <div class="form-group row">
+            <label for="reviewTitle" style="margin-right: 125px;"><b>Project</b></label>
+            <input class="form-control" type="text" name="reviewTitle"  [(ngModel)]="newReview.projectName">
           </div>
           <div class="form-group row">
             <label for="introDescription" style="margin-right: 100px;"><b>Review</b></label>
