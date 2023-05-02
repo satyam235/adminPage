@@ -9,6 +9,8 @@ import { ToastrService } from 'ngx-toastr';
 import { AdminService } from "../services/admin.service";
 import { from } from 'rxjs';
 import { environment } from "../../environment/environment";
+import { HttpClient } from '@angular/common/http';
+
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
@@ -90,16 +92,16 @@ export class AdminComponent  {
     {
       "title":"Project 1",
       "description":"This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",
-      "url":"https://www.youtube.com/embed/1y_kfWUCFDQ"
+      "link":"https://www.youtube.com/embed/1y_kfWUCFDQ"
     },{
       "title":"Project 2",
       "description":"This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",
-      "url":"https://www.youtube.com/embed/1y_kfWUCFDQ"
+      "link":"https://www.youtube.com/embed/1y_kfWUCFDQ"
 
     },{
       "title":"Project 3",
       "description":"This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",
-      "url":"https://www.youtube.com/embed/1y_kfWUCFDQ"
+      "link":"https://www.youtube.com/embed/1y_kfWUCFDQ"
     }
   ]
 
@@ -162,13 +164,20 @@ export class AdminComponent  {
     contactUsAddress: this.contactUsAddress
   });
   tag_name = "";
-  constructor(private _formBuilder: FormBuilder,private toastr: ToastrService,private adminService: AdminService,) {
+
+  upcommingProjectCard = {
+    "projectOneImage":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR11dbvjijhPrRPlnz-gmIREmQi67ShE2lD7_KcjB-IrQ&s",
+    "projectTwoImage":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR11dbvjijhPrRPlnz-gmIREmQi67ShE2lD7_KcjB-IrQ&s",
+    "projectOneTitle":"Title 1",
+    "projectTwoTitle":"Title 2",
+    "projectOneDate":"Date 1",
+    "projectTwoDate":"Date 2"
+  }
+
+  constructor(private _formBuilder: FormBuilder,private toastr: ToastrService,private adminService: AdminService,private http: HttpClient) {
     this.fetchIntroData();
     this.fetchAboutUsData();
     this.setReviewData();
-    this.setUpcommingProjectsData();
-    this.setContactUsData();
-    this.fetchCommercialDesignData();
   }
   
   selectedOption: string = 'intro';
@@ -182,6 +191,8 @@ export class AdminComponent  {
   projectsData= this.introData;
   reviewData = this.introData;
   addCarausalImage_toggle = false;
+
+  contactUsImage = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR11dbvjijhPrRPlnz-gmIREmQi67ShE2lD7_KcjB-IrQ&s';
 
 
   // Function to set intro data
@@ -313,33 +324,95 @@ export class AdminComponent  {
     }
     this.fetchData(params).then((res)=>{
       res = JSON.parse(res);
+      console.log(res);
+      this.youtubecards = [];
+      // for (let i = 0; i < res.length; i++) {
+      //   const element = res[i];
+      //   this.youtubecards.push(element);
+      // }
+      this.youtubecards = res['data'];
+      console.log(this.youtubecards);
       this.toastr.success('Projects fetched successfully');
     }
     ).catch((err)=>{
       this.toastr.error('Error while fetching data');
     })
   }
+
   setReviewData() {
     this.reviewForm.controls.reviewTitle.setValue(this.reviewData.title);
     this.reviewForm.controls.reviewSubtitle.setValue(this.reviewData.subtitle);
     this.reviewForm.controls.reviewDescription.setValue(this.reviewData.description);
   }
 
-  setUpcommingProjectsData() {
-    this.upcommingProjectList.minor_projects =  ['https://picsum.photos/600/400?random=1','https://picsum.photos/600/400?random=2','https://picsum.photos/600/400?random=3','https://picsum.photos/600/400?random=4']
+  fetchtUpcommingProjectsData() {
+    // this.upcommingProjectList.minor_projects =  ['https://picsum.photos/600/400?random=1','https://picsum.photos/600/400?random=2','https://picsum.photos/600/400?random=3','https://picsum.photos/600/400?random=4']
     this.upcommingProjectList.major_projects = 'https://picsum.photos/600/400?random=5'
+    var params = {
+      "documentName" : "upcomingProjectImages"
+    }
+    this.fetchData(params).then((res)=>{
+      res = JSON.parse(res);
+      this.upcommingProjectList.minor_projects = res['data'];
+      // this.upcommingProjectList.major_projects = res['major_projects'];
+      this.toastr.success('Upcoming Projects fetched successfully');
+    }
+    ).catch((err)=>{
+      this.toastr.error('Error while fetching data');
+    })
   }
 
-  setContactUsData() {
-    this.contactUsForm.controls.contactUsEmail.setValue('satyam@gmail.com');
-    this.contactUsForm.controls.contactUsPhone.setValue('1234567890');
-    this.contactUsForm.controls.contactUsAddress.setValue('123, ABC Street, XYZ City, 123456');
+  fetchContactUsData() {
+    // this.contactUsForm.controls.contactUsEmail.setValue('satyam@gmail.com');
+    // this.contactUsForm.controls.contactUsPhone.setValue('1234567890');
+    // this.contactUsForm.controls.contactUsAddress.setValue('123, ABC Street, XYZ City, 123456');
+    var params = {
+      "documentName" : "contactUs"
+    }
+    this.fetchData(params).then((res)=>{
+      res = JSON.parse(res);
+      this.contactUsImage = res['contactUsImage'];
+      this.toastr.success('Contact Us fetched successfully');
+    }
+    ).catch((err)=>{
+      this.toastr.error('Error while fetching data');
+    }
+    )
+  }
+
+  fetchProjectCardData() {
+    var params = {
+      "documentName" : "upcomingProject"
+    }
+    this.fetchData(params).then((res)=>{
+      res = JSON.parse(res);
+      this.upcommingProjectCard = res;
+      this.toastr.success('Project cards fetched successfully');
+    }
+    ).catch((err)=>{
+      this.toastr.error('Error while fetching data');
+    })
   }
 
   // Function to show form based on selected option
   showForm(option: string) {
     if (option == "residential_design"){
       this.fetchResidentialDesignData();
+    }
+    if (option == "projects"){
+      this.fetchProjectsData();
+    }
+    if (option == "commercial_design"){
+      this.fetchCommercialDesignData();
+    }
+    if (option == "upcomming_project_card"){
+      this.fetchProjectCardData();
+    }
+    if (option == "upcomming_projects"){
+      this.fetchtUpcommingProjectsData();
+    }
+    if (option == "contact_us"){
+      this.fetchContactUsData();
     }
     this.selectedOption = option;
   }
@@ -399,7 +472,20 @@ export class AdminComponent  {
      }else if (type == 'add_carausal_image'){
       this.tempImage = e.target.result;
      }
-
+     else if (type == 'upcomming_project_card'){
+      console.log(id);
+      if (id == 2){
+        console.log("here 1");
+        this.upcommingProjectCard.projectOneImage = e.target.result;
+      }
+      if(id == 3){
+        console.log("here 2");
+        this.upcommingProjectCard.projectTwoImage = e.target.result;
+      }
+     }
+     else if (type == 'contact_us'){
+      this.contactUsImage = e.target.result;
+     }
     }
     reader.readAsDataURL(file);
     if (type != 'about_us') this.selectFileInput.nativeElement.value = null; 
@@ -463,9 +549,25 @@ export class AdminComponent  {
  }
 
   // Function to update Projects data
-  updateProjects() {
+  async updateProjects() {
     console.log(this.youtubecards);
-    this.toastr.success('Updated projects successfully');
+    var data = this.youtubecards;
+    var params = {
+      endpoint:"admin/youtube-cards",
+      data:{
+        "documentName":"youtubeCards",
+        "data":data
+      }
+    }
+    try {
+      var response = await this.sendData(params);
+      this.toastr.success('Updated projects successfully');
+    }
+    catch (err) {
+      console.log(err);
+      this.toastr.error('Error while updating projects');
+    }
+    
   }
 
   updateRealLifeReviews() {
@@ -501,16 +603,49 @@ export class AdminComponent  {
     this.toastr.success('Review Added Successfully');
   }
 
-  updateUpcommingProjects() {
+  async updateUpcommingProjects() {
     console.log(this.upcommingProjectList);
-    this.toastr.success('Upcomming Projects Updated Successfully');
+    const formData = new FormData();
+    for(let i=0; i<this.upcommingProjectList['minor_projects'].length; i++){
+      var file = await this.createFileFromUrl(this.upcommingProjectList['minor_projects'][i]);
+      formData.append('projectImagesList', file);
+    }
+    formData.append('documentName', "upcomingProjectImages");
+    var params = {
+      endpoint:"admin/upcoming-project-images",
+      formData:formData
+    }
+    this.uploadFile(params).then((res:any)=>{
+      // if response if 200 then taostr success
+      if (res.status == 200){
+        this.toastr.success('Updated upcomming projects successfully');
+      }
+    }).catch((err:any)=>{
+      // if response is 400 then taostr error
+      this.toastr.error('Error while updating upcomming projects');
+    })
   }
 
-  updateContactUs() {
-    console.log(this.contactUsForm.value.contactUsEmail);
-    console.log(this.contactUsForm.value.contactUsPhone);
-    console.log(this.contactUsForm.value.contactUsAddress);
-    this.toastr.success('Contact Us Updated Successfully');
+  async updateContactUs() {
+    // console.log(this.contactUsForm.value.contactUsEmail);
+    // console.log(this.contactUsForm.value.contactUsPhone);
+    // console.log(this.contactUsForm.value.contactUsAddress);
+    const formData = new FormData();
+    formData.append('contactUsImage',await this.createFileFromUrl(this.contactUsImage));
+    formData.append('documentName', "contactUs");
+    var params = {
+      endpoint:"admin/contactus-image",
+      formData:formData
+    }
+    this.uploadFile(params).then((res:any)=>{
+      // if response if 200 then taostr success
+      if (res.status == 200){
+        this.toastr.success('Updated contact us successfully');
+      }
+    }).catch((err:any)=>{
+      // if response is 400 then taostr error
+      this.toastr.error('Error while updating contact us');
+    })
   }
 
  async updateProjectsDisplay(type:string) {
@@ -629,6 +764,16 @@ export class AdminComponent  {
     });
   }
 
+  sendData(params: any): Promise<any> {
+    const url = "https://interiorica-backend.onrender.com/"+params.endpoint;
+
+    const headers = {
+      'Content-Type': 'application/json'
+    };
+
+    return this.http.post(url, params.data, { headers }).toPromise();
+  }
+
   fetchData(params: any): Promise<any> {
     const queryString = Object.keys(params)
       .map(key => key + '=' + encodeURIComponent(params[key]))
@@ -678,6 +823,47 @@ export class AdminComponent  {
   deleteCarausalImage(index=0){
     this.projectCarausal1.image_list.splice(index,1);
     this.toastr.success('Image Deleted Successfully');
+  }
+
+  deleteYoutubeCard(index=0){
+    this.youtubecards.splice(index,1);
+    this.toastr.success('Youtube Card Deleted Successfully');
+  }
+
+  addNewYoutubeCard(){
+    var youtubeCard = {
+      "title" : "New Youtube Card",
+      "link" : "https://www.youtube.com/watch?v=8F9jXYOH2c0",
+      "description" : "New Youtube Card Description"
+    }
+    this.youtubecards.push(youtubeCard);
+    this.toastr.success('New Youtube Card Added Successfully');
+  }
+
+  updateUpcommingProjectCard(){
+    const formData = new FormData();
+    formData.append('projectOneImage', this.upcommingProjectCard.projectOneImage);
+    formData.append('projectTwoImage', this.upcommingProjectCard.projectTwoImage);
+    formData.append('projectOneTitle', this.upcommingProjectCard.projectOneTitle);
+    formData.append('projectTwoTitle', this.upcommingProjectCard.projectTwoTitle);
+    formData.append('projectOneDate', this.upcommingProjectCard.projectOneDate);
+    formData.append('projectTwoDate', this.upcommingProjectCard.projectTwoDate);
+    formData.append('documentName', 'upcomingProject');
+    var params = {
+      endpoint:"admin/upcoming-project",
+      formData:formData
+    }
+    this.uploadFile(params).then((res:any)=>{
+      // if response if 200 then taostr success
+      if (res.status == 200){
+        this.toastr.success('Updated Upcomming Project successfully');
+        this.fetchProjectCardData();
+      }
+    }).catch((err:any)=>{
+      // if response is 400 then taostr error
+      console.log(err);
+      this.toastr.error('Error while updating Upcomming Project');
+    })
   }
 
 }

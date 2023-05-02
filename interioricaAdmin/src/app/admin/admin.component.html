@@ -2,15 +2,16 @@
     <!-- admin.component.html -->
     <h1 class="mt-3 ml-2">Welcome Admin</h1>
     <div class="options mt-3 ml-2">
-      <button class="btn btn-primary mr-2" (click)="showForm('intro')">Intro</button>
-      <button class="btn btn-primary mr-2" (click)="showForm('aboutUs')">About Us</button>
-      <button class="btn btn-primary mr-2" (click)="showForm('residential_design')">Residential Design</button>
-      <button class="btn btn-primary mr-2" (click)="showForm('commercial_design')">Commercial Design</button>
-      <button class="btn btn-primary mr-2" (click)="showForm('projects')">Projects</button>
-      <button class="btn btn-primary mr-2" (click)="showForm('real_life_reviews')">Real Life reviews Section</button>
-      <button class="btn btn-primary mr-2" (click)="showForm('reviews')">Reviews</button>
-      <button class="btn btn-primary mr-2" (click)="showForm('upcomming_projects')">Upcomming Projects</button>
-      <button class="btn btn-primary mr-2" (click)="showForm('contact_us')">Contact Us</button>
+      <button class="btn btn-primary mr-2 mt-2" (click)="showForm('intro')">Intro</button>
+      <button class="btn btn-primary mr-2 mt-2" (click)="showForm('aboutUs')">About Us</button>
+      <button class="btn btn-primary mr-2 mt-2" (click)="showForm('residential_design')">Residential Design</button>
+      <button class="btn btn-primary mr-2 mt-2" (click)="showForm('commercial_design')">Commercial Design</button>
+      <button class="btn btn-primary mr-2 mt-2" (click)="showForm('projects')">Projects</button>
+      <button class="btn btn-primary mr-2 mt-2" (click)="showForm('real_life_reviews')">Real Life reviews Section</button>
+      <button class="btn btn-primary mr-2 mt-2" (click)="showForm('reviews')">Reviews</button>
+      <button class="btn btn-primary mr-2 mt-2" (click)="showForm('upcomming_project_card')">Upcomming Project card</button>
+      <button class="btn btn-primary mr-2 mt-2" (click)="showForm('upcomming_projects')">Upcomming Projects</button>
+      <button class="btn btn-primary mr-2 mt-2" (click)="showForm('contact_us')">Contact Us</button>
       
     </div>
     <div class="form-container mt-3">
@@ -187,11 +188,13 @@
             <label for="title" style="margin-right: 125px;"><b>Title</b></label>
             <input class="form-control" type="text" [(ngModel)]="item.title" name="title">
             <label for="title" style="margin-right: 125px;"><b>Youtube Link</b></label>
-            <input class="form-control" type="text" [(ngModel)]="item.url" name="title">
+            <input class="form-control" type="text" [(ngModel)]="item.link" name="title">
             <label>Description</label>
             <textarea class="form-control" [(ngModel)]="item.description" rows="3"></textarea>
           </div>
+          <butttton type="submit" class="btn btn-danger" (click)="deleteYoutubeCard(i)">Delete Card</butttton><br><br>
         </div>
+        <button type="submit" class="btn btn-primary mr-2" (click)="addNewYoutubeCard()">Add New Card</button>
         <button type="submit" class="btn btn-success" (click)="updateProjects()">Update Projects data</button>
         <br>
         <br>
@@ -285,7 +288,7 @@
         </div>
       </ng-container>
       <ng-container *ngIf="selectedOption == 'contact_us'">
-        <form [formGroup]="contactUsForm">
+        <!-- <form [formGroup]="contactUsForm">
           <div class="form-group row">
             <label for="email"><b>Email</b></label>
             <input class="form-control" type="email" formControlName="contactUsEmail" name="email">
@@ -298,8 +301,47 @@
             <label for="Address" ><b>Address</b></label>
             <input  class="form-control" type="text" formControlName="contactUsAddress" name="Address">
           </div>
-        </form>
+        </form> -->
+        <img style="margin-bottom: 20px;" class="preview-image" [src]=" contactUsImage ? contactUsImage  : null" (click)="selectFileInput.click()">
+        <input #selectFileInput type="file" (change)="imagesPreview($event,'contact_us')" id="file-input" name="file-input" style="display: none;">
+        <br>
         <button type="submit" class="btn btn-success" (click)="updateContactUs()">Update Contact Info</button>
+      </ng-container>
+      <ng-container *ngIf="selectedOption == 'upcomming_project_card'">
+          <div>
+            <div>
+              <div  class="form-group row">
+                <label for="email"><b>Project 1 Title </b></label>
+                <input class="form-control" type="text" [(ngModel)]="upcommingProjectCard.projectOneTitle" name="email">
+              </div>
+              <div  class="form-group row">
+                <label for="email"><b>Project 1 Date</b></label>
+                <input class="form-control" type="text" [(ngModel)]="upcommingProjectCard.projectOneDate" name="email">
+              </div>    
+            <div class="form-group row">
+              <label for="email"><b>Project 1 Image</b></label>
+              <img style="margin-bottom: 20px;" class="preview-image" [src]=" upcommingProjectCard.projectOneImage ? upcommingProjectCard.projectOneImage  : null" (click)="selectFileInput.click()">
+              <input #selectFileInput type="file" (change)="imagesPreview($event,'upcomming_project_card',2,'projectOneImage')" id="file-input" name="file-input" style="display: none;">
+            </div>
+            <br><br><br>
+            <div class="form-group row">
+              <div  class="form-group row">
+                <label for="email"><b>Project 2 Title </b></label>
+                <input class="form-control" type="text" [(ngModel)]="upcommingProjectCard.projectTwoTitle" name="email">
+              </div>
+              <div  class="form-group row">
+                <label for="email"><b>Project 2 Date</b></label>
+                <input class="form-control" type="text" [(ngModel)]="upcommingProjectCard.projectTwoDate" name="email">
+              </div>
+              <div  class="form-group row">
+                <label for="email"><b>Project 2 Image</b></label>
+                <img style="margin-bottom: 20px;" class="preview-image" [src]=" upcommingProjectCard.projectTwoImage ? upcommingProjectCard.projectTwoImage  : null" (click)="selectFileInput.click()">
+                <input #selectFileInput type="file" (change)="imagesPreview($event,'upcomming_project_card',3,'projectTwoImage')" id="file-input" name="file-input" style="display: none;">
+              </div>
+          </div>
+          <button type="submit" class="btn btn-success" (click)="updateUpcommingProjectCard()">Update Upcomming Project Card</button><br><br><br>
+            </div>
+        </div>
       </ng-container>
       </div>
     </div>
