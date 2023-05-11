@@ -283,7 +283,7 @@
           <div *ngFor="let minor_project_image of upcommingProjectList.minor_projects; let i = index">
             <div class="form-group row">
                 <img style="margin-bottom: 20px;" class="preview-image" [src]=" minor_project_image ? minor_project_image  : null" (click)="selectFileInput.click()">
-                <input #selectFileInput type="file" (change)="imagesPreview($event,'upcomming_projects',i)" id="file-input" name="file-input" style="display: none;">
+                <input #selectFileInput type="file" (change)="imagesPreview($event,'upcomming_projects',i,'minor')" id="file-input" name="file-input" style="display: none;">
                 <br>
               </div>
           </div>

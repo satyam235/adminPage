@@ -392,13 +392,26 @@ export class AdminComponent  {
 
   fetchtUpcommingProjectsData() {
     // this.upcommingProjectList.minor_projects =  ['https://picsum.photos/600/400?random=1','https://picsum.photos/600/400?random=2','https://picsum.photos/600/400?random=3','https://picsum.photos/600/400?random=4']
-    this.upcommingProjectList.major_projects = 'https://picsum.photos/600/400?random=5'
+    this.upcommingProjectList.major_projects = ''
     var params = {
       "documentName" : "upcomingProjectImages"
     }
     this.fetchData(params).then((res)=>{
       res = JSON.parse(res);
-      this.upcommingProjectList.minor_projects = res['data'];
+      for (let i = 0; i < res['data'].length; i++) {
+        const element = res['data'][i];
+        if (i==0){
+          this.upcommingProjectList.minor_projects[i] = element;
+        }else{
+          if (i == res['data'].length-1) {
+            this.upcommingProjectList.major_projects = element;
+          }
+          else{
+            this.upcommingProjectList.minor_projects.push(element);
+          }
+        }
+        
+      }
       // this.upcommingProjectList.major_projects = res['major_projects'];
       this.toastr.success('Upcoming Projects fetched successfully');
     }
@@ -483,7 +496,6 @@ export class AdminComponent  {
 
       if (type == 'intro') this.introImage = e.target.result;
       else if (type == 'about_us'){
-        console.log(subtype);
         if (subtype == 'header') {
           this.aboutUsHeaderImage = e.target.result;
           this.selectFileInput1.nativeElement.value = '';
@@ -530,13 +542,10 @@ export class AdminComponent  {
       this.tempImage = e.target.result;
      }
      else if (type == 'upcomming_project_card'){
-      console.log(id);
       if (id == 2){
-        console.log("here 1");
         this.upcommingProjectCard.projectOneImage = e.target.result;
       }
       if(id == 3){
-        console.log("here 2");
         this.upcommingProjectCard.projectTwoImage = e.target.result;
       }
      }
@@ -609,7 +618,6 @@ export class AdminComponent  {
 
   // Function to update Projects data
   async updateProjects() {
-    console.log(this.youtubecards);
     var data = this.youtubecards;
     var params = {
       endpoint:"admin/youtube-cards",
@@ -735,12 +743,13 @@ export class AdminComponent  {
   }
 
   async updateUpcommingProjects() {
-    console.log(this.upcommingProjectList);
     const formData = new FormData();
     for(let i=0; i<this.upcommingProjectList['minor_projects'].length; i++){
       var file = await this.createFileFromUrl(this.upcommingProjectList['minor_projects'][i]);
       formData.append('projectImagesList', file);
     }
+    var file = await this.createFileFromUrl(this.upcommingProjectList['major_projects']);
+    formData.append('projectImagesList', file);
     formData.append('documentName', "upcomingProjectImages");
     var params = {
       endpoint:"admin/upcoming-project-images",
@@ -758,9 +767,6 @@ export class AdminComponent  {
   }
 
   async updateContactUs() {
-    // console.log(this.contactUsForm.value.contactUsEmail);
-    // console.log(this.contactUsForm.value.contactUsPhone);
-    // console.log(this.contactUsForm.value.contactUsAddress);
     const formData = new FormData();
     formData.append('contactUsImage',await this.createFileFromUrl(this.contactUsImage));
     formData.append('documentName', "contactUs");
@@ -862,11 +868,8 @@ export class AdminComponent  {
   }
   
   deleteTagImage(tagIndex=0,index=0){
-    console.log(index);
-    console.log(tagIndex);
     this.projectCarausal1.tags[tagIndex].image_list.splice(index,1);
     this.toastr.success('Tag Image Deleted Successfully');
-    console.log(this.projectCarausal1);
   }
 
   addNewtag(){
@@ -939,7 +942,6 @@ export class AdminComponent  {
   }
 
   addCarausalImage(){
-    console.log(this.addCarausalImage_toggle);
     this.addCarausalImage_toggle = !this.addCarausalImage_toggle;
   }
 
