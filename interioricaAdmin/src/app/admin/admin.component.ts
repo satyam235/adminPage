@@ -249,7 +249,7 @@ export class AdminComponent  {
     }
 
     var params = {
-      "documentName" : "residential-design"
+      "documentName" : "residentialDesign"
     }
     this.fetchData(params).then((res)=>{
       res = JSON.parse(res);
@@ -830,7 +830,7 @@ export class AdminComponent  {
           formData.append(this.projectCarausal1.tags[i].tag_name, this.projectCarausal1.tags[i].image_list[j]);
         }
       }
-      formData.append('documentName', "residential-design");
+      formData.append('documentName', "residentialDesign");
       var params = {
         endpoint:"admin/residential-design",
         formData:formData
