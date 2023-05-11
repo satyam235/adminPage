@@ -179,8 +179,6 @@ export class AdminComponent  {
   }
 
   constructor(private _formBuilder: FormBuilder,private toastr: ToastrService,private adminService: AdminService,private http: HttpClient,private router: Router) { 
-    this.fetchIntroData();
-    this.fetchAboutUsData();
   }
   
   selectedOption: string = 'intro';
@@ -442,6 +440,12 @@ export class AdminComponent  {
 
   // Function to show form based on selected option
   showForm(option: string) {
+    if (option == "about_us"){
+      this.fetchAboutUsData();
+    }
+    if (option == "intro"){
+      this.fetchIntroData();
+    }
     if (option == "residential_design"){
       this.fetchResidentialDesignData();
     }
@@ -565,7 +569,8 @@ export class AdminComponent  {
     }
     this.uploadFile(params).then((res:any)=>{
       // if response if 200 then taostr success
-      if (res.status == 200){
+      res = JSON.parse(res);
+      if (res.message == "Image Added."){
         this.toastr.success('Updated intro successfully');
       }
     }).catch((err:any)=>{
@@ -591,8 +596,9 @@ export class AdminComponent  {
     }
     this.uploadFile(params).then((res:any)=>{
       // if response if 200 then taostr success
-      if (res.status == 200){
-        this.toastr.success('Updated about us successfully');
+      res = JSON.parse(res);
+      if (res.message == "Image Added."){
+        this.toastr.success('Updated intro successfully');
       }
     }).catch((err:any)=>{
       // if response is 400 then taostr error
