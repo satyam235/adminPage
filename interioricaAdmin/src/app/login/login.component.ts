@@ -22,7 +22,7 @@ export class LoginComponent {
       window.location.href = "/admin";
     }
     else{
-      this.toastr.error('Invalid Credentials', 'Error');
+      this.toastr.error('Invalid Credentials');
     }
   }
 
