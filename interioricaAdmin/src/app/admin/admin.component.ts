@@ -441,7 +441,7 @@ export class AdminComponent  {
 
   // Function to show form based on selected option
   showForm(option: string) {
-    if (option == "about_us"){
+    if (option == "aboutUs"){
       this.fetchAboutUsData();
     }
     if (option == "intro"){
