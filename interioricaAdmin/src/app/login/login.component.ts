@@ -3,13 +3,13 @@ import {FormsModule}  from '@angular/forms';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { environment } from 'src/environment/environment';
-
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-import { ToastrService } from 'ngx-toastr';
+
 export class LoginComponent {
   email = "";
   password = "";
