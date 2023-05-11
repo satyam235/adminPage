@@ -179,6 +179,7 @@ export class AdminComponent  {
   }
 
   constructor(private _formBuilder: FormBuilder,private toastr: ToastrService,private adminService: AdminService,private http: HttpClient,private router: Router) { 
+    this.fetchIntroData();
   }
   
   selectedOption: string = 'intro';
